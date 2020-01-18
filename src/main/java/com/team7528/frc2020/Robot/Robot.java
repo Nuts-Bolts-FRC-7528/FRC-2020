@@ -1,8 +1,15 @@
 package com.team7528.frc2020.Robot;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.team7528.frc2020.Robot.auto.AutoModeExecutor;
+import com.team7528.frc2020.Robot.auto.modes.DoNothingAuto;
+import com.team7528.frc2020.Robot.auto.modes.MoveForwardAutoEncoder;
+import com.team7528.frc2020.Robot.auto.modes.MoveForwardAutoGyro;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -12,12 +19,16 @@ import static com.team7528.frc2020.Robot.common.RobotMap.*;
 
 public class Robot extends TimedRobot {
 
-    private DifferentialDrive m_drive; //Creates a new variable for how the wheels of the robot will move
-
     //Prints out stats regarding the string builder
     private StringBuilder _sb = new StringBuilder();
     private int looperCounter = 0;
     private SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy HH:mm:ss");
+
+    //Lets you pick an autonomous code
+    private AutoModeExecutor doNothingAuto = new AutoModeExecutor(new DoNothingAuto());
+    private AutoModeExecutor moveForwardAutoGyro = new AutoModeExecutor(new MoveForwardAutoGyro());
+    private AutoModeExecutor moveForwardAutoEncoder = new AutoModeExecutor(new MoveForwardAutoEncoder());
+    private SendableChooser<AutoModeExecutor> autoPicker = new SendableChooser<AutoModeExecutor>();
 
     /**
      * Initiates motor controller set up
@@ -41,9 +52,26 @@ public class Robot extends TimedRobot {
         m_leftAft.configFactoryDefault();
         m_rightAft.configFactoryDefault();
 
+        //Initialize encoders
+        m_leftFront.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+        m_rightFront.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+
+        m_leftFront.setSensorPhase(false);
+        m_rightFront.setSensorPhase(true);
+
+        //Reset encoders to 0
+        m_leftFront.setSelectedSensorPosition(0,0,10);
+        m_rightFront.setSelectedSensorPosition(0,0,10);
+
         //Defines that the back motors follows the front motors
         m_leftAft.follow(m_leftFront);
         m_rightAft.follow(m_rightFront);
+
+        //Auto code choosing
+        autoPicker.setDefaultOption("Do Nothing", doNothingAuto);
+        autoPicker.addOption("Move Forward (Gyro)", moveForwardAutoGyro);
+        autoPicker.addOption("Move Forward (Encoder)", moveForwardAutoEncoder);
+        SmartDashboard.putData(autoPicker);
 
         //Appends the last revision date to the string builder
         File file = new File(Robot.class.getProtectionDomain().getCodeSource().getLocation().getPath());
@@ -61,11 +89,38 @@ public class Robot extends TimedRobot {
         Shuffleboard.getTab("DRIVETRAIN").add(m_drive);
 
     }
+    @Override
+    public void autonomousInit() {
+        //Reset encoders to 0
+        m_leftFront.setSelectedSensorPosition(0,0,10);
+        m_rightFront.setSelectedSensorPosition(0,0,10);
 
+        //Start Auto
+        AutoModeExecutor chosenAuto = autoPicker.getSelected();
+        chosenAuto.start();
+    }
     /**
      * The code will be active during teleop periodic
      */
 
+    @Override
+    public void autonomousPeriodic() {
+        //Prints Stats during auto
+        looperCounter++;
+        if (looperCounter >= 10) {
+            printStats(); looperCounter = 0;
+        }
+    }
+
+    /**
+     * Stops auto
+     */
+    @Override
+    public void teleopInit() {
+        //Stops Auto
+        AutoModeExecutor chosenAuto = autoPicker.getSelected();
+        chosenAuto.stop();
+    }
     @Override
     public void teleopPeriodic() {
 
@@ -74,7 +129,9 @@ public class Robot extends TimedRobot {
 
         //Prints out diagnostics
         looperCounter++;
-        if (looperCounter >= 10) { printStats(); looperCounter = 0; }
+        if (looperCounter >= 10) {
+            printStats(); looperCounter = 0;
+        }
     }
 
     /**

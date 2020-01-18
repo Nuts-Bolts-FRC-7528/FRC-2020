@@ -1,6 +1,5 @@
 package com.team7528.frc2020.Robot.auto;
 
-
 import com.team7528.frc2020.Robot.auto.actions.Action;
 
 /**
