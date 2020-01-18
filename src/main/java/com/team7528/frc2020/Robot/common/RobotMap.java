@@ -16,6 +16,10 @@ public class RobotMap {
     public static WPI_TalonSRX m_rightAft = new WPI_TalonSRX(2);
     public static WPI_TalonSRX m_rightFront = new WPI_TalonSRX(3);
 
+    //PowerCell Shooter
+    public static WPI_TalonSRX turretRotator = new WPI_TalonSRX(62);
+    public static WPI_TalonSRX flywheelSpinner = new WPI_TalonSRX(63);
+    public static WPI_TalonSRX hood = new WPI_TalonSRX(15);
     //Operator interface
     public static Joystick m_joy = new Joystick(0); //For chassis driver
     public static XboxController m_gamepad = new XboxController(1); //For manipulator
