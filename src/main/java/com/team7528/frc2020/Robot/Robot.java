@@ -5,6 +5,9 @@ import com.team7528.frc2020.Robot.auto.AutoModeExecutor;
 import com.team7528.frc2020.Robot.auto.modes.DoNothingAuto;
 import com.team7528.frc2020.Robot.auto.modes.MoveForwardAutoEncoder;
 import com.team7528.frc2020.Robot.auto.modes.MoveForwardAutoGyro;
+import com.team7528.frc2020.Robot.auto.modes.turnAutoDegrees.TurnBackAuto;
+import com.team7528.frc2020.Robot.auto.modes.turnAutoDegrees.TurnLeftAuto;
+import com.team7528.frc2020.Robot.auto.modes.turnAutoDegrees.TurnRightAuto;
 import com.team7528.frc2020.Robot.components.BallShooter;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -29,6 +32,9 @@ public class Robot extends TimedRobot {
     private AutoModeExecutor doNothingAuto = new AutoModeExecutor(new DoNothingAuto());
     private AutoModeExecutor moveForwardAutoGyro = new AutoModeExecutor(new MoveForwardAutoGyro());
     private AutoModeExecutor moveForwardAutoEncoder = new AutoModeExecutor(new MoveForwardAutoEncoder());
+    private AutoModeExecutor turnRightAuto = new AutoModeExecutor(new TurnRightAuto());
+    private AutoModeExecutor turnBackAuto = new AutoModeExecutor(new TurnBackAuto());
+    private AutoModeExecutor turnLeftAuto = new AutoModeExecutor(new TurnLeftAuto());
     private SendableChooser<AutoModeExecutor> autoPicker = new SendableChooser<AutoModeExecutor>();
 
     /**
@@ -74,6 +80,9 @@ public class Robot extends TimedRobot {
         autoPicker.setDefaultOption("Do Nothing", doNothingAuto);
         autoPicker.addOption("Move Forward (Gyro)", moveForwardAutoGyro);
         autoPicker.addOption("Move Forward (Encoder)", moveForwardAutoEncoder);
+        autoPicker.addOption("Turn Right", turnRightAuto);
+        autoPicker.addOption("Turn Around", turnBackAuto);
+        autoPicker.addOption("Turn Left", turnLeftAuto);
         SmartDashboard.putData(autoPicker);
 
         //Appends the last revision date to the string builder
