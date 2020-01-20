@@ -31,6 +31,7 @@ public class WaitAction implements Action {
     @Override
     public boolean finished() {
         return (Timer.getFPGATimestamp() - startTime >= timeToWait);
+        // (current timestamp) - (starting time for action) is greater than or equal to (time to move)
     }
 
     @Override

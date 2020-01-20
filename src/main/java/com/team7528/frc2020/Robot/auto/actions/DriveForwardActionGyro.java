@@ -33,6 +33,7 @@ public class DriveForwardActionGyro implements Action {
     @Override
     public boolean finished() {
         return (Timer.getFPGATimestamp() - startTime >= movingSeconds);
+        // (current timestamp) - (starting time for action) is greater than or equal to (time to move)
     }
     /**
      * Adjusts to correct the angle
