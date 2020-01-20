@@ -29,12 +29,12 @@ public class AutoModeExecutor {
      * Creates a new thread of the AutoModeBase and runs it
      */
     public void start() {
-        if(thread == null) {
-            thread = new Thread(autoMode);
-            if(autoMode != null) {
-                autoMode.run();
+        if(thread == null) { // If the thread is empty
+            thread = new Thread(autoMode); // Make it contain autoMode
+            if(autoMode != null) { // If autoMode is not empty
+                autoMode.run(); // Run it
             }
-            thread.start();
+            thread.start(); // Start the thread
         }
     }
 }
