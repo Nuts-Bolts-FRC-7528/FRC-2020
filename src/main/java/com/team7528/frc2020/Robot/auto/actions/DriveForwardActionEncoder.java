@@ -10,7 +10,7 @@ public class DriveForwardActionEncoder implements Action {
     private double movingPower; //power of motors
     private int movingSeconds; //time for moving
     private final double kP = 0.07; //P constant
-    private double error; //
+    private double error;
     private double turn_power;
     private double startTime; //FPGA timestamp at the start of the WaitAction
     /**

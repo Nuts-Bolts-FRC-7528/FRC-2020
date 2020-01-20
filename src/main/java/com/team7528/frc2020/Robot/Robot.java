@@ -5,6 +5,7 @@ import com.team7528.frc2020.Robot.auto.AutoModeExecutor;
 import com.team7528.frc2020.Robot.auto.modes.DoNothingAuto;
 import com.team7528.frc2020.Robot.auto.modes.MoveForwardAutoEncoder;
 import com.team7528.frc2020.Robot.auto.modes.MoveForwardAutoGyro;
+import com.team7528.frc2020.Robot.components.BallShooter;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -55,9 +56,11 @@ public class Robot extends TimedRobot {
         //Initialize encoders
         m_leftFront.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
         m_rightFront.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-
         m_leftFront.setSensorPhase(false);
-        m_rightFront.setSensorPhase(true);
+        m_rightFront.setSensorPhase(true); //Right side encoder is inverted
+
+        //Initialize components
+        BallShooter.init();
 
         //Reset encoders to 0
         m_leftFront.setSelectedSensorPosition(0,0,10);
@@ -127,6 +130,9 @@ public class Robot extends TimedRobot {
         //Sets up arcade drive
         m_drive.arcadeDrive(-m_joy.getY(), m_joy.getX());
 
+        //Periodic logic for components
+        BallShooter.periodic();
+
         //Prints out diagnostics
         looperCounter++;
         if (looperCounter >= 10) {
@@ -149,6 +155,8 @@ public class Robot extends TimedRobot {
 
         //Prints out the string builder
         System.out.println(_sb.toString());
+
+        BallShooter.reportStatistics();
 
     }
 }
