@@ -1,5 +1,6 @@
 package com.team7528.frc2020.Robot.common;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Joystick;
@@ -13,10 +14,10 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 public class RobotMap {
 
     //Drive train
-    public static WPI_TalonSRX m_leftAft = new WPI_TalonSRX(0);
-    public static WPI_TalonSRX m_leftFront = new WPI_TalonSRX(1);
-    public static WPI_TalonSRX m_rightAft = new WPI_TalonSRX(2);
-    public static WPI_TalonSRX m_rightFront = new WPI_TalonSRX(3);
+    public static WPI_TalonFX m_leftAft = new WPI_TalonFX(0);
+    public static WPI_TalonFX m_leftFront = new WPI_TalonFX(1);
+    public static WPI_TalonFX m_rightAft = new WPI_TalonFX(2);
+    public static WPI_TalonFX m_rightFront = new WPI_TalonFX(3);
 
     //Creates a new variable for how the wheels of the robot will move
     public static DifferentialDrive m_drive;
