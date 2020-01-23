@@ -24,7 +24,8 @@ public class DriveForwardActionEncoder implements Action {
         movingSeconds = seconds;
     }
     /**
-     *
+     * Returns if the desired amount of seconds has passed
+     * 
      * @return If the desired amount of seconds has passed
      */
     @Override
