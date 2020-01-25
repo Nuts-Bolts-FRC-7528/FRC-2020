@@ -130,6 +130,7 @@ public class Robot extends TimedRobot {
     /**
      * Stops auto
      */
+
     @Override
     public void teleopInit() {
         //Stops Auto
@@ -144,6 +145,25 @@ public class Robot extends TimedRobot {
 
         //Periodic logic for components
         BallShooter.periodic();
+
+        //Sets up for fine control
+
+        if (m_joy.getPOV() == 0) { //Forward
+            m_leftFront.set(0.25);
+            m_rightFront.set(0.25);
+        }
+        if (m_joy.getPOV() == 90) { //Right
+            m_rightFront.set(-0.35);
+            m_leftFront.set(0.35);
+        }
+        if (m_joy.getPOV() == 180) { //Backward
+            m_rightAft.set(-0.25);
+            m_leftAft.set(-0.25);
+        }
+        if (m_joy.getPOV() == 270) { //Left
+            m_leftAft.set(0.35);
+            m_rightFront.set(-0.35);
+        }
 
         //Prints out diagnostics
         looperCounter++;
