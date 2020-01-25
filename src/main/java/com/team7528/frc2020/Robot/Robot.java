@@ -27,6 +27,7 @@ public class Robot extends TimedRobot {
     private AutoModeExecutor doNothingAuto = new AutoModeExecutor(new DoNothingAuto());
     private AutoModeExecutor moveForwardAutoGyro = new AutoModeExecutor(new MoveForwardAutoGyro());
     private AutoModeExecutor moveForwardAutoEncoder = new AutoModeExecutor(new MoveForwardAutoEncoder());
+    private AutoModeExecutor driveForwardAutoDegrees = new AutoModeExecutor(new DriveForwardAutoDegrees());
     private AutoModeExecutor oneWheelTurnRightAuto = new AutoModeExecutor(new OneWheelTurnRightAuto());
     private AutoModeExecutor oneWheelTurnBackAuto = new AutoModeExecutor(new OneWheelTurnBackAuto());
     private AutoModeExecutor oneWheelTurnLeftAuto = new AutoModeExecutor(new OneWheelTurnLeftAuto());
@@ -80,6 +81,7 @@ public class Robot extends TimedRobot {
         autoPicker.setDefaultOption("Do Nothing", doNothingAuto);
         autoPicker.addOption("Move Forward (Gyro)", moveForwardAutoGyro);
         autoPicker.addOption("Move Forward (Encoder)", moveForwardAutoEncoder);
+        autoPicker.addOption("Move Forward (Degrees)", driveForwardAutoDegrees);
         autoPicker.addOption("Turn Right (One Wheel)", oneWheelTurnRightAuto);
         autoPicker.addOption("Turn Around (One Wheel)", oneWheelTurnBackAuto);
         autoPicker.addOption("Turn Left (One Wheel)", oneWheelTurnLeftAuto);
