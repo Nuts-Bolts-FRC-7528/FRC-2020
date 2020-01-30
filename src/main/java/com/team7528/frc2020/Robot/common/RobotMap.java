@@ -1,8 +1,10 @@
 package com.team7528.frc2020.Robot.common;
 
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.AnalogGyro;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -34,4 +36,8 @@ public class RobotMap {
 
     //Gyroscope
     public static AnalogGyro gyroScope = new AnalogGyro(0);
+
+    //Intake
+    public static DoubleSolenoid intake = new DoubleSolenoid(1,2);
+    public static VictorSPX intakeMotor = new VictorSPX(0);
 }
