@@ -20,7 +20,7 @@ public class DriveForwardActionDegrees implements Action {
     private int previousPositionRight; // The previous encoder position on the right
 
     private double speed; // The speed to move at
-    private double turn_power; // The speed to turn with
+    private double turn_power; // The speed to turn at
 
     private double error; // The distance between where we are and where we want to be
     private double previousError; // The previous iteration's error
