@@ -20,7 +20,7 @@ public class OneWheelTurnAction implements Action {
 
     @Override
     public boolean finished() {
-        return gyroScope.getAngle() == desiredAngle;
+        return Math.abs(gyroScope.getAngle() - startingAngle + 1) >= desiredAngle; // 1 degree of tolerance
     }
 
     @Override
