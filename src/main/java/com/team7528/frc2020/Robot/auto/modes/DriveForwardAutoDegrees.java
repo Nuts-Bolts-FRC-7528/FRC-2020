@@ -11,7 +11,7 @@ import com.team7528.frc2020.Robot.auto.actions.WaitAction;
 public class DriveForwardAutoDegrees extends AutoModeBase {
     @Override
     protected void routine() throws AutoModeDoneException {
-        runAction(new DriveForwardActionDegrees(5)); // Drives 5 feet forward
+        runAction(new DriveForwardActionDegrees(60)); // Drives 5 feet (60 inches) forward
         runAction(new WaitAction(15)); // Then waits for the rest of autonomous (set as 15 just to be safe)
     }
 }

@@ -20,7 +20,7 @@ public class TurnAction implements Action {
 
     @Override
     public boolean finished() {
-        return gyroScope.getAngle() == desiredAngle;
+        return gyroScope.getAngle() - startingAngle == desiredAngle;
     }
 
     @Override

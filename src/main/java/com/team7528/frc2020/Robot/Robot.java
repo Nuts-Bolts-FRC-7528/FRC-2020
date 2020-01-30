@@ -36,7 +36,7 @@ public class Robot extends TimedRobot {
     private AutoModeExecutor rightTurnAuto = new AutoModeExecutor(new RightTurnAuto());
 
 
-    private SendableChooser<AutoModeExecutor> autoPicker = new SendableChooser<AutoModeExecutor>();
+    private SendableChooser<AutoModeExecutor> autoPicker = new SendableChooser<>();
 
     /**
      * Initiates motor controller set up

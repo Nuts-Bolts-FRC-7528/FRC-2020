@@ -2,7 +2,7 @@ package com.team7528.frc2020.Robot.auto.modes;
 
 import com.team7528.frc2020.Robot.auto.AutoModeBase;
 import com.team7528.frc2020.Robot.auto.AutoModeDoneException;
-import com.team7528.frc2020.Robot.auto.actions.UTurnAction;
+import com.team7528.frc2020.Robot.auto.actions.TurnAction;
 
 /**
  * This turns the robot 180 degrees, or backward
@@ -10,6 +10,6 @@ import com.team7528.frc2020.Robot.auto.actions.UTurnAction;
 public class UTurnAuto extends AutoModeBase {
     @Override
     protected void routine() throws AutoModeDoneException {
-        runAction(new UTurnAction(180.0));
+        runAction(new TurnAction(180.0));
     }
 }
