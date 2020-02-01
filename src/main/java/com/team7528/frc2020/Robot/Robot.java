@@ -1,5 +1,6 @@
 package com.team7528.frc2020.Robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.team7528.frc2020.Robot.auto.AutoModeExecutor;
 import com.team7528.frc2020.Robot.auto.modes.*;
@@ -48,11 +49,11 @@ public class Robot extends TimedRobot {
         //Defines a new string builder
         StringBuilder _initSb = new StringBuilder();
 
-        //Defines the value for dead band
-        m_drive.setDeadband(.05);
-
         //Defines a new differential drive
         m_drive = new DifferentialDrive(m_leftFront, m_rightFront);
+
+        //Defines the value for dead band
+        m_drive.setDeadband(.05);
 
         //Resets talons to factory default
         m_leftFront.configFactoryDefault();
@@ -77,6 +78,9 @@ public class Robot extends TimedRobot {
         m_leftAft.follow(m_leftFront);
         m_rightAft.follow(m_rightFront);
 
+        // Invert the right motors
+        m_rightFront.setInverted(true);
+
         //Auto code choosing
         autoPicker.setDefaultOption("Do Nothing", doNothingAuto);
         autoPicker.addOption("Move Forward (Gyro)", moveForwardAutoGyro);
@@ -93,7 +97,6 @@ public class Robot extends TimedRobot {
         //Appends the last revision date to the string builder
         File file = new File(Robot.class.getProtectionDomain().getCodeSource().getLocation().getPath());
         _initSb.append("ROBOT.JAVA LAST REVISED:").append(sdf.format(file.lastModified()));
-
         _initSb.append("\n-----\nLEFT FRONT DRIVETRAIN FIRM:").append(m_leftFront.getFirmwareVersion());
         _initSb.append("\nLEFT AFT DRIVETRAIN FIRM:").append(m_leftAft.getFirmwareVersion());
         _initSb.append("\nRIGHT FRONT DRIVETRAIN FIRM:").append(m_rightFront.getFirmwareVersion());
@@ -109,10 +112,12 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         //Prints statistics on motor power levels 5 times per second while the robot is powered
-        looperCounter++;
+        /*looperCounter++;
         if (looperCounter >= 10) {
             printStats(); looperCounter = 0;
-        }
+        }*/
+
+        SmartDashboard.putNumber("POV", m_joy.getPOV());
     }
     @Override
     public void autonomousInit() {
@@ -146,29 +151,22 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
 
-        //Sets up arcade drive
-        m_drive.arcadeDrive(-m_joy.getY(), m_joy.getX());
-
         //Periodic logic for components
         BallShooter.periodic();
 
         //Sets up for fine control
 
         if (m_joy.getPOV() == 0) { //Forward
-            m_leftFront.set(0.25);
-            m_rightFront.set(0.25);
-        }
-        if (m_joy.getPOV() == 90) { //Right
-            m_rightFront.set(-0.35);
-            m_leftFront.set(0.35);
-        }
-        if (m_joy.getPOV() == 180) { //Backward
-            m_rightAft.set(-0.25);
-            m_leftAft.set(-0.25);
-        }
-        if (m_joy.getPOV() == 270) { //Left
-            m_leftAft.set(0.35);
-            m_rightFront.set(-0.35);
+            m_drive.arcadeDrive(0.5,0);
+        } else if (m_joy.getPOV() == 90) { //Right
+            m_drive.arcadeDrive(0,.5);
+        } else if (m_joy.getPOV() == 180) { //Backward
+            m_drive.arcadeDrive(-.5,0);
+        } else if (m_joy.getPOV() == 270) { //Left
+            m_drive.arcadeDrive(0,-.5);
+        } else {
+            //Sets up arcade drive
+            m_drive.arcadeDrive(-m_joy.getY(), m_joy.getX());
         }
     }
 
