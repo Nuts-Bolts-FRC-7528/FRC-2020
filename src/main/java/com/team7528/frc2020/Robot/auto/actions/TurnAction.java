@@ -6,6 +6,7 @@ import static com.team7528.frc2020.Robot.common.RobotMap.m_drive;
 /**
  * Turns to a certain angle
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class TurnAction implements Action {
 
     private final double kP = 0.07; // P constant

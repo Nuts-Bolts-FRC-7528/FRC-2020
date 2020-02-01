@@ -107,6 +107,14 @@ public class Robot extends TimedRobot {
 
     }
     @Override
+    public void robotPeriodic() {
+        //Prints statistics on motor power levels 5 times per second while the robot is powered
+        looperCounter++;
+        if (looperCounter >= 10) {
+            printStats(); looperCounter = 0;
+        }
+    }
+    @Override
     public void autonomousInit() {
         //Reset encoders to 0
         m_leftFront.setSelectedSensorPosition(0,0,10);
@@ -122,11 +130,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousPeriodic() {
-        //Prints Stats during auto
-        looperCounter++;
-        if (looperCounter >= 10) {
-            printStats(); looperCounter = 0;
-        }
+
     }
 
     /**
@@ -165,12 +169,6 @@ public class Robot extends TimedRobot {
         if (m_joy.getPOV() == 270) { //Left
             m_leftAft.set(0.35);
             m_rightFront.set(-0.35);
-        }
-
-        //Prints out diagnostics
-        looperCounter++;
-        if (looperCounter >= 10) {
-            printStats(); looperCounter = 0;
         }
     }
 
