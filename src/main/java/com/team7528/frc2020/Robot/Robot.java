@@ -1,6 +1,5 @@
 package com.team7528.frc2020.Robot;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.team7528.frc2020.Robot.auto.AutoModeExecutor;
 import com.team7528.frc2020.Robot.auto.modes.*;
@@ -17,6 +16,7 @@ import java.time.Instant;
 
 import static com.team7528.frc2020.Robot.common.RobotMap.*;
 
+@SuppressWarnings("FieldCanBeLocal")
 public class Robot extends TimedRobot {
 
     //Prints out stats regarding the string builder
@@ -36,8 +36,12 @@ public class Robot extends TimedRobot {
     private AutoModeExecutor uTurnAuto = new AutoModeExecutor(new UTurnAuto());
     private AutoModeExecutor rightTurnAuto = new AutoModeExecutor(new RightTurnAuto());
 
+    private Double fineControlSpeedDouble;
+    private Double deadBandOption;
 
     private SendableChooser<AutoModeExecutor> autoPicker = new SendableChooser<>();
+    private SendableChooser<Double> fineControlSpeed = new SendableChooser<>();
+    private SendableChooser<Double> deadBandOptions = new SendableChooser<>();
 
     /**
      * Initiates motor controller set up
@@ -51,9 +55,6 @@ public class Robot extends TimedRobot {
 
         //Defines a new differential drive
         m_drive = new DifferentialDrive(m_leftFront, m_rightFront);
-
-        //Defines the value for dead band
-        m_drive.setDeadband(.05);
 
         //Resets talons to factory default
         m_leftFront.configFactoryDefault();
@@ -92,7 +93,22 @@ public class Robot extends TimedRobot {
         autoPicker.addOption("Turn Right", rightTurnAuto);
         autoPicker.addOption("Turn Around", uTurnAuto);
         autoPicker.addOption("Turn Left", leftTurnAuto);
-        SmartDashboard.putData(autoPicker);
+        SmartDashboard.putData("Auto Mode", autoPicker);
+
+        // Fine Control Speed choosing
+        fineControlSpeed.addOption("35% Speed", 0.35);
+        fineControlSpeed.addOption("40% Speed", 0.40);
+        fineControlSpeed.setDefaultOption("45% Speed", 0.45);
+        fineControlSpeed.addOption("50% Speed", 0.50);
+        fineControlSpeed.addOption("55% Speed", 0.55);
+        fineControlSpeed.addOption("60% Speed", 0.60);
+        SmartDashboard.putData("Fine Control Speed", fineControlSpeed);
+
+        // Deadband choosing
+        deadBandOptions.setDefaultOption("5%", 0.05);
+        deadBandOptions.addOption("10%", 0.10);
+        deadBandOptions.addOption("15%", 0.15);
+        SmartDashboard.putData("Dead Band", deadBandOptions);
 
         //Appends the last revision date to the string builder
         File file = new File(Robot.class.getProtectionDomain().getCodeSource().getLocation().getPath());
@@ -111,14 +127,9 @@ public class Robot extends TimedRobot {
     }
     @Override
     public void robotPeriodic() {
-        //Prints statistics on motor power levels 5 times per second while the robot is powered
-        /*looperCounter++;
-        if (looperCounter >= 10) {
-            printStats(); looperCounter = 0;
-        }*/
 
-        SmartDashboard.putNumber("POV", m_joy.getPOV());
     }
+
     @Override
     public void autonomousInit() {
         //Reset encoders to 0
@@ -128,14 +139,24 @@ public class Robot extends TimedRobot {
         //Start Auto
         AutoModeExecutor chosenAuto = autoPicker.getSelected();
         chosenAuto.start();
+
+        //Defines the value for dead band
+        deadBandOption = deadBandOptions.getSelected();
+
+        m_drive.setDeadband(deadBandOption);
     }
     /**
-     * The code will be active during teleop periodic
+     * The code will be active during autonomous periodic
      */
 
     @Override
     public void autonomousPeriodic() {
-
+        //Prints Stats during auto
+        looperCounter++;
+        if (looperCounter >= 10) {
+            printStats();
+            looperCounter = 0;
+        }
     }
 
     /**
@@ -147,26 +168,36 @@ public class Robot extends TimedRobot {
         //Stops Auto
         AutoModeExecutor chosenAuto = autoPicker.getSelected();
         chosenAuto.stop();
+        fineControlSpeedDouble = fineControlSpeed.getSelected();
     }
+
+    /**
+     * This code will be active during teleop periodic
+     */
     @Override
     public void teleopPeriodic() {
-
         //Periodic logic for components
         BallShooter.periodic();
 
         //Sets up for fine control
 
         if (m_joy.getPOV() == 0) { //Forward
-            m_drive.arcadeDrive(0.5,0);
+            m_drive.arcadeDrive(fineControlSpeedDouble,0);
         } else if (m_joy.getPOV() == 90) { //Right
-            m_drive.arcadeDrive(0,.5);
+            m_drive.arcadeDrive(0,fineControlSpeedDouble);
         } else if (m_joy.getPOV() == 180) { //Backward
-            m_drive.arcadeDrive(-.5,0);
+            m_drive.arcadeDrive(-fineControlSpeedDouble,0);
         } else if (m_joy.getPOV() == 270) { //Left
-            m_drive.arcadeDrive(0,-.5);
+            m_drive.arcadeDrive(0,-fineControlSpeedDouble);
         } else {
             //Sets up arcade drive
             m_drive.arcadeDrive(-m_joy.getY(), m_joy.getX());
+        }
+        //Prints out diagnostics
+        looperCounter++;
+        if (looperCounter >= 10) {
+//            printStats();
+            looperCounter = 0;
         }
     }
 

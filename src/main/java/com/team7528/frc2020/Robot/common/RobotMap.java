@@ -39,6 +39,6 @@ public class RobotMap {
     public static AnalogGyro gyroScope = new AnalogGyro(0);
 
     //Intake
-    public static DoubleSolenoid intake = new DoubleSolenoid(1,2);
+    // public static DoubleSolenoid intake = new DoubleSolenoid(1,2);
     public static VictorSPX intakeMotor = new VictorSPX(0);
 }
