@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.team7528.frc2020.Robot.auto.AutoModeExecutor;
 import com.team7528.frc2020.Robot.auto.modes.*;
 import com.team7528.frc2020.Robot.components.BallShooter;
+import com.team7528.frc2020.Robot.components.PowerCellHolder;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -70,6 +71,7 @@ public class Robot extends TimedRobot {
 
         //Initialize components
         BallShooter.init();
+        PowerCellHolder.init();
 
         //Reset encoders to 0
         m_leftFront.setSelectedSensorPosition(0,0,10);
@@ -135,6 +137,7 @@ public class Robot extends TimedRobot {
         //Reset encoders to 0
         m_leftFront.setSelectedSensorPosition(0,0,10);
         m_rightFront.setSelectedSensorPosition(0,0,10);
+        PowerCellHolder.resetEncoder();
 
         //Start Auto
         AutoModeExecutor chosenAuto = autoPicker.getSelected();
@@ -199,6 +202,7 @@ public class Robot extends TimedRobot {
 //            printStats();
             looperCounter = 0;
         }
+        PowerCellHolder.reportTelemetry();
     }
 
     /**
