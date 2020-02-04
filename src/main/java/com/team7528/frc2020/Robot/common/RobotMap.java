@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.team7528.lib.Blinkin;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
@@ -45,4 +46,7 @@ public class RobotMap {
     //Intake
     public static DoubleSolenoid intake = new DoubleSolenoid(1,2);
     public static VictorSPX intakeMotor = new VictorSPX(0);
+
+    //LEDs
+    public static Blinkin m_blinkin = new Blinkin(0);
 }

@@ -126,10 +126,13 @@ public class Robot extends TimedRobot {
         //Adds data for the shuffleboard regarding the differential drive
         Shuffleboard.getTab("DRIVETRAIN").add(m_drive);
 
+        //Run LED init routine
+        m_blinkin.init();
     }
+
     @Override
     public void robotPeriodic() {
-
+        m_blinkin.periodic(); //Set blinkin pattern during robot operation
     }
 
     @Override
@@ -147,11 +150,14 @@ public class Robot extends TimedRobot {
         deadBandOption = deadBandOptions.getSelected();
 
         m_drive.setDeadband(deadBandOption);
+
+        //Set LED to alliance color
+        m_blinkin.setToTeamColor(false);
     }
+
     /**
      * The code will be active during autonomous periodic
      */
-
     @Override
     public void autonomousPeriodic() {
         //Prints Stats during auto
@@ -205,10 +211,14 @@ public class Robot extends TimedRobot {
         PowerCellHolder.reportTelemetry();
     }
 
+    @Override
+    public void disabledInit() {
+        m_blinkin.rainbow(); //Sets blinkin to use rainbow pattern
+    }
+
     /**
      * Prints out statistics
      */
-
     private void printStats() {
         _sb.append("**********");
         _sb.append("\ntimestamp").append(sdf.format(Instant.now().getEpochSecond()));
