@@ -29,6 +29,7 @@ public class RobotMap {
     public static WPI_TalonSRX turretRotator = new WPI_TalonSRX(62);
     public static WPI_TalonSRX flywheelSpinner = new WPI_TalonSRX(63);
     public static WPI_TalonSRX hood = new WPI_TalonSRX(15);
+    public static WPI_TalonSRX ballConveyor = new WPI_TalonSRX(61);
 
     //Operator interface
     public static Joystick m_joy = new Joystick(0); //For chassis driver
@@ -38,6 +39,6 @@ public class RobotMap {
     public static AnalogGyro gyroScope = new AnalogGyro(0);
 
     //Intake
-    public static DoubleSolenoid intake = new DoubleSolenoid(1,2);
+    // public static DoubleSolenoid intake = new DoubleSolenoid(1,2);
     public static VictorSPX intakeMotor = new VictorSPX(0);
 }
