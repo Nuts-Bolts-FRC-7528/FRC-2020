@@ -2,16 +2,20 @@ package com.team7528.frc2020.Robot.components;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import static com.team7528.frc2020.Robot.common.RobotMap.drumSpinner;
-import static com.team7528.frc2020.Robot.common.RobotMap.m_gamepad;
+import static com.team7528.frc2020.Robot.common.RobotMap.*;
 
 /**
  * Represents our Power Cell Holder. When start is pressed, it shifts between positions
  * like a revolver. The amount of ticks between positions can be adjusted with the
  * ticksBetweenPositions variable. This variable, as well as the tolerance, kP, and kI
  * values should be tuned prior to use.
+ *
+ * <br>
+ * NOTE: The holder should be configured with the actuator extended over an empty power cell
+ * slot for this to work right.
  */
 @SuppressWarnings("FieldCanBeLocal")
 public class PowerCellHolder {
@@ -43,33 +47,37 @@ public class PowerCellHolder {
         drumSpinner.setSelectedSensorPosition(0,0,10);
     }
 
+    /**
+     * Periodic logic for the Power Cell Holder. Uses a PI loop to maintain position and
+     * retracts and extends the actuator for
+     */
     public static void periodic() {
+        double drive; //Value to be applied to the motor
 
-        if(m_gamepad.getStartButtonPressed() && !isGoingToNextPosition) {
-            isGoingToNextPosition = true;
-            setpoint = drumSpinner.getSelectedSensorPosition() + ticksBetweenPositions;
+        error = setpoint - drumSpinner.getSelectedSensorPosition(); //Collect error
+        errorSum += error; //Increment error sum for integrator
+
+        if(errorSum > integrator_limit) { //If error sum is too large
+            errorSum = integrator_limit; //Set error sum to max value
+        } else if(errorSum < -integrator_limit) { //If error sum is below the minimum value
+            errorSum = -integrator_limit; //Set it to the max negative value
         }
 
-        if(isGoingToNextPosition) {
-            //PI to next position here
-            double drive; //Value to be applied to the motor
+        drive = kP * error + kI * errorSum; //Calculate PI loop
+        drumSpinner.set(ControlMode.PercentOutput,drive); //Drive motor based on PI results
 
-            error = setpoint - drumSpinner.getSelectedSensorPosition(); //Collect error
-            errorSum += error; //Increment error sum for integrator
+        //If start is pressed and we are NOT already moving
+        if(m_gamepad.getStartButtonPressed() && !isGoingToNextPosition) {
+            SmartDashboard.putBoolean("DRUM MOVING", true); //Alert operator
+            ballPush.set(DoubleSolenoid.Value.kReverse); //Retract actuator
+            setpoint = drumSpinner.getSelectedSensorPosition() + ticksBetweenPositions; //Add to PI setpoint
+            isGoingToNextPosition = true;
+        }
 
-            if(errorSum > integrator_limit) { //If error sum is too large
-                errorSum = integrator_limit; //Set error sum to max value
-            } else if(errorSum < -integrator_limit) { //If error sum is below the minimum value
-                errorSum = -integrator_limit; //Set it to the max negative value
-            }
-
-            drive = kP * error + kI * errorSum; //Calculate PI loop
-            drumSpinner.set(ControlMode.PercentOutput,drive); //Drive motor based on PI results
-
-            if(Math.abs(error) <= tolerance) { //If we are within our tolerance level
-                isGoingToNextPosition = false; //Disable PI loop
-                errorSum = 0; //Reset integrator for next go around
-            }
+        if(Math.abs(error) <= tolerance) { //If we are within our tolerance level
+            SmartDashboard.putBoolean("DRUM MOVING", false); //Alert operator
+            ballPush.set(DoubleSolenoid.Value.kForward); //Extend actuator
+            isGoingToNextPosition = false;
         }
     }
 
