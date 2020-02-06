@@ -35,8 +35,7 @@ public class RobotMap {
 
     //PowerCell holder drum spinner
     public static TalonSRX drumSpinner = new TalonSRX(23);
-    public static DoubleSolenoid ballSetter = new DoubleSolenoid(2,3
-;
+    public static DoubleSolenoid ballSetter = new DoubleSolenoid(2,3);
     //Operator interface
     public static Joystick m_joy = new Joystick(0); //For chassis driver
     public static XboxController m_gamepad = new XboxController(1); //For manipulator
