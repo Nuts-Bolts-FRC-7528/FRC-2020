@@ -69,14 +69,14 @@ public class PowerCellHolder {
         //If start is pressed and we are NOT already moving
         if(m_gamepad.getStartButtonPressed() && !isGoingToNextPosition) {
             SmartDashboard.putBoolean("DRUM MOVING", true); //Alert operator
-            ballPush.set(DoubleSolenoid.Value.kReverse); //Retract actuator
+            ballSetter.set(DoubleSolenoid.Value.kReverse); //Retract actuator
             setpoint = drumSpinner.getSelectedSensorPosition() + ticksBetweenPositions; //Add to PI setpoint
             isGoingToNextPosition = true;
         }
 
         if(Math.abs(error) <= tolerance) { //If we are within our tolerance level
             SmartDashboard.putBoolean("DRUM MOVING", false); //Alert operator
-            ballPush.set(DoubleSolenoid.Value.kForward); //Extend actuator
+            ballSetter.set(DoubleSolenoid.Value.kForward); //Extend actuator
             isGoingToNextPosition = false;
         }
     }

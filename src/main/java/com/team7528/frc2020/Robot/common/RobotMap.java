@@ -31,11 +31,10 @@ public class RobotMap {
     public static WPI_TalonSRX turretRotator = new WPI_TalonSRX(62);
     public static WPI_TalonSRX flywheelSpinner = new WPI_TalonSRX(63);
     public static WPI_TalonSRX hood = new WPI_TalonSRX(15);
-    public static WPI_TalonSRX ballConveyor = new WPI_TalonSRX(61);
 
     //PowerCell holder drum spinner
     public static TalonSRX drumSpinner = new TalonSRX(23);
-
+    public static DoubleSolenoid ballSetter = new DoubleSolenoid(2,3);
     //Operator interface
     public static Joystick m_joy = new Joystick(0); //For chassis driver
     public static XboxController m_gamepad = new XboxController(1); //For manipulator
