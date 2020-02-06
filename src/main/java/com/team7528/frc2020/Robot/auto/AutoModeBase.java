@@ -10,7 +10,7 @@ public abstract class AutoModeBase implements Runnable {
     private double updateRate = 1.0 / 50.0;
 
     /**
-     * Defines things to actually occour for the automode. All things the automode does lives in this method.
+     * Defines things to actually occur for the automode. All things the automode does lives in this method.
      * As it is an abstract method, routine() gets defined by all */
     protected abstract void routine() throws AutoModeDoneException;
 

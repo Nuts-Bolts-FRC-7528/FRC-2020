@@ -31,7 +31,6 @@ public class RobotMap {
     public static WPI_TalonSRX turretRotator = new WPI_TalonSRX(62);
     public static WPI_TalonSRX flywheelSpinner = new WPI_TalonSRX(63);
     public static WPI_TalonSRX hood = new WPI_TalonSRX(15);
-    public static WPI_TalonSRX ballConveyor = new WPI_TalonSRX(61);
 
     //PowerCell holder drum spinner
     public static TalonSRX drumSpinner = new TalonSRX(23);
