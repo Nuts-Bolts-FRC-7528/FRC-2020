@@ -28,16 +28,16 @@ public class Turret {
 
     public void periodic() {
 
+        currentRPM = turretRotator.getSelectedSensorPosition();
         double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
-        double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
 
         // Setting up the rotation of turret
 
         if (currentRPM == desiredRPM) {
             if (tv == 1) {
-                drumSpinner.configFactoryDefault();
+                turretRotator.configFactoryDefault();
             } else if (tv == 0) {
-                drumSpinner.getMotorOutputPercent();
+                turretRotator.configFactoryDefault();
             }
             loopCount++; // Increments loopCount
             if (loopCount >= 10) {
@@ -52,9 +52,9 @@ public class Turret {
             }
 
             if (seek_r) {
-                drumSpinner.configFactoryDefault();
+                turretRotator.configFactoryDefault();
             } else {
-                drumSpinner.setInverted(true);
+                turretRotator.setInverted(true);
             }
 
             if (m_gamepad.getXButtonPressed()) { // left
@@ -62,15 +62,18 @@ public class Turret {
             }
 
             if (seek_l) {
-                drumSpinner.configFactoryDefault();
+                turretRotator.configFactoryDefault();
             } else {
-                drumSpinner.setInverted(true);
+                turretRotator.setInverted(true);
             }
 
             if (m_gamepad.getAButtonPressed()) { // disengage
-                disengage = true;
+                disengage = false;
             }
 
+            if (disengage) {
+                turretRotator.stopMotor();
+            }
         }
 
     }
