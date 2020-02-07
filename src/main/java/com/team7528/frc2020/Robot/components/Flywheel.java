@@ -1,26 +1,31 @@
 package com.team7528.frc2020.Robot.components;
 
-
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 import static com.team7528.frc2020.Robot.common.RobotMap.*;
 
 /**
  * Class for the flywheel component
  */
+@SuppressWarnings("unused")
 public class Flywheel implements Component {
 
-    private static StringBuilder stats = new StringBuilder(); // StringBuilder for statistics
-    private static double currentRPM, d, a2; // The flywheel's current RPM, the distance to the target, and the angle from the limelight
-    private static int loopCount; // Helps print statistics 5 times per second
+    private static boolean justShot; // Whether or not we just shot a ball
     private static final double h1 = 11.25; // The height the limelight is mounted at
     private static final double h2 = 98.25; // The height of the target
     private static final double a1 = 7528; // The angle the limelight is mounted at
     private static final double kD = 0.07; // Constant for the flywheel speed
-    private static final double k_SpeedToRPM = 7528; // Conversion from the set speed to RPM
-    private static NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("limelight"); // The limelight NetworkTable, used to set a2
+    private static final double k_SpeedToRPM = 600 / 360.0; // Conversion from the speed parameter to RPM
     private static double desiredRPM; // As it says, the desired RPM
+    private static double currentRPM; // The flywheel's current RPM
+    private static double d; // The distance to the target
+    private static double a2; // The angle from the limelight
+    private static int loopCount; // Helps print statistics 5 times per second
+    private static int k_LoopCount; // Makes sure we don't push the actuator in before we shoot
+    private static NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("limelight"); // The limelight NetworkTable, used to set a2
+    private static StringBuilder stats = new StringBuilder(); // StringBuilder for statistics
 
     /**
      * Resets the iteration counter (loopCount)
@@ -33,22 +38,31 @@ public class Flywheel implements Component {
      * Shoots the ball when start is pressed and prints statistics
      */
     public static void periodic() {
+        if (justShot) {
+            if (k_LoopCount >= 20) { // Gives the actuator a second to push the ball
+                reset();
+            } else {
+                k_LoopCount++;
+            }
+        }
         a2 = limelightTable.getEntry("ty").getDouble(0); // Sets a2, the y position of the target
-        currentRPM = flywheelSpinner.getSelectedSensorVelocity(); // Gets the flywheel's current RPM
+        currentRPM = flywheelSpinner.getSelectedSensorVelocity() * k_SpeedToRPM; // Gets the flywheel's current RPM
         d = (h2-h1) / Math.tan(a1+a2); // Finds the distance
         desiredRPM = 8000 * d * kD; // Sets the desired RPM
 
-        if (currentRPM == desiredRPM) {
-            if (m_gamepad.getStartButtonPressed()) {
-
+        if (currentRPM == desiredRPM) { // If we're at the desired RPM ...
+            if (m_gamepad.getStartButtonPressed()) { // ... and the start button is pressed ...
+                if (!justShot) { // ... and we haven't just shot ...
+                    shoot(); // ... then shoot
+                }
             }
-        } else {
-            flywheelSpinner.set(desiredRPM / k_SpeedToRPM);
-        }
+        } else { // If we aren't at the desired RPM ...
+            flywheelSpinner.set(desiredRPM / k_SpeedToRPM); // ... set the motor speed to the desired RPM
+        } // This is the speed parameter ^^^ k_SpeedToRPM converts what we set it to into RPM
         loopCount++; // Increments loopCount
-        if (loopCount >= 10) {
-            reportStatistics(); // Reports statistics
-            loopCount = 0; // Reset the loopCount
+        if (loopCount >= 10) { // If a fifth of a second has passed ...
+            reportStatistics(); // ... reports statistics ...
+            loopCount = 0; // ... and reset the loopCount
         }
     }
 
@@ -56,9 +70,25 @@ public class Flywheel implements Component {
      * Reports the current flywheel RPM, then resets the String Builder (stats)
      */
     private static void reportStatistics() {
-        stats.append("Current flywheel RPM: ").append(currentRPM);
-        System.out.println(stats);
-        stats.setLength(0);
+        stats.append("Current flywheel RPM: ").append(currentRPM); // The current flywheel RPM
+        System.out.println(stats); // Print the stats variable (current flywheel RPM)
+        stats.setLength(0); // And clear the stats variable to get it ready for the next print
     }
 
+    /**
+     * Shoots the ball
+     */
+    private static void shoot() {
+        ballSetter.set(DoubleSolenoid.Value.kForward); // Push the ball into the shooter
+        justShot = true; // and set justShot to true
+    }
+
+    /**
+     * Resets the actuator
+     */
+    private static void reset() {
+        ballSetter.set(DoubleSolenoid.Value.kReverse); // Pull in the actuator
+        justShot = false; // and set justShot to false
+        k_LoopCount = 0;
+    }
 }

@@ -26,6 +26,9 @@ public class RobotMap {
     //Creates a new variable for how the wheels of the robot will move
     public static DifferentialDrive m_drive;
 
+    // Control Panel
+    public static WPI_TalonSRX controlPanelWheel = new WPI_TalonSRX(42);
+    public static DoubleSolenoid m_wheelEjector = new DoubleSolenoid(2,3);
 
     //PowerCell Shooter
     public static WPI_TalonSRX turretRotator = new WPI_TalonSRX(62);
@@ -35,6 +38,7 @@ public class RobotMap {
     //PowerCell holder drum spinner
     public static TalonSRX drumSpinner = new TalonSRX(23);
     public static DoubleSolenoid ballSetter = new DoubleSolenoid(2,3);
+
     //Operator interface
     public static Joystick m_joy = new Joystick(0); //For chassis driver
     public static XboxController m_gamepad = new XboxController(1); //For manipulator
