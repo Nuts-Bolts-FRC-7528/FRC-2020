@@ -1,7 +1,9 @@
 package com.team7528.frc2020.Robot.components;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
-import static com.team7528.frc2020.Robot.common.RobotMap.*;
+import edu.wpi.first.wpilibj.DigitalInput;
+import static com.team7528.frc2020.Robot.common.RobotMap.m_gamepad;
+import static com.team7528.frc2020.Robot.common.RobotMap.turretRotator;
 
 /**
  * Code will operate by spinning either left or right until a target is detected
@@ -16,6 +18,7 @@ public class Turret {
     private boolean seek_r;
     private boolean seek_l;
     private boolean disengage;
+    DigitalInput limitSwitch;
 
     public void init() {
         loopCount = 0; // Resets the loopCount
@@ -52,9 +55,9 @@ public class Turret {
             }
 
             if (seek_r) {
-                turretRotator.configFactoryDefault();
+                turretRotator.set(90);
             } else {
-                turretRotator.setInverted(true);
+                turretRotator.set(-90);
             }
 
             if (m_gamepad.getXButtonPressed()) { // left
@@ -62,9 +65,9 @@ public class Turret {
             }
 
             if (seek_l) {
-                turretRotator.configFactoryDefault();
+                turretRotator.set(-90);
             } else {
-                turretRotator.setInverted(true);
+                turretRotator.set(90);
             }
 
             if (m_gamepad.getAButtonPressed()) { // disengage
