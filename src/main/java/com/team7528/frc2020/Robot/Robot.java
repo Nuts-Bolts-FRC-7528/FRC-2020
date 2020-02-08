@@ -5,6 +5,7 @@ import com.team7528.frc2020.Robot.auto.AutoModeExecutor;
 import com.team7528.frc2020.Robot.auto.modes.*;
 import com.team7528.frc2020.Robot.components.BallShooter;
 import com.team7528.frc2020.Robot.components.PowerCellHolder;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -128,6 +129,9 @@ public class Robot extends TimedRobot {
 
         //Run LED init routine
         m_blinkin.init();
+
+        //Transmits video through cameras
+        CameraServer.getInstance().startAutomaticCapture();
     }
 
     @Override
