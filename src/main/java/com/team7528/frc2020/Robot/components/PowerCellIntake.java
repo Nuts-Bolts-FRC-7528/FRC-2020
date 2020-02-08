@@ -18,7 +18,7 @@ public static int ballAmount = 0;
      */
     public static void periodic() {
         if (!ballCounter.get()) {
-            boolean.class
+
         }
         if(m_gamepad.getBumper(GenericHID.Hand.kRight)) { //if right bumper is pressed
             intake.set(DoubleSolenoid.Value.kReverse); //drops piston
