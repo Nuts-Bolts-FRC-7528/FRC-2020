@@ -170,6 +170,9 @@ public class Robot extends TimedRobot {
             printStats();
             looperCounter = 0;
         }
+
+        //Continue PowerCell usage during autonomous
+        PowerCellHolder.periodic();
     }
 
     /**
@@ -191,6 +194,7 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic() {
         //Periodic logic for components
         BallShooter.periodic();
+        PowerCellHolder.periodic();
 
         //Sets up for fine control
 
@@ -206,13 +210,13 @@ public class Robot extends TimedRobot {
             //Sets up arcade drive
             m_drive.arcadeDrive(-m_joy.getY(), m_joy.getX());
         }
+
         //Prints out diagnostics
         looperCounter++;
         if (looperCounter >= 10) {
 //            printStats();
             looperCounter = 0;
         }
-        PowerCellHolder.reportTelemetry();
     }
 
     @Override

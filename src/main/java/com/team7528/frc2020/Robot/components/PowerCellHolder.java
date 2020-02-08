@@ -2,7 +2,6 @@ package com.team7528.frc2020.Robot.components;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import static com.team7528.frc2020.Robot.common.RobotMap.*;
@@ -16,6 +15,8 @@ import static com.team7528.frc2020.Robot.common.RobotMap.*;
  * <br>
  * NOTE: The holder should be configured with the actuator extended over an empty power cell
  * slot for this to work right.
+ *
+ * @author Ethan Hanlon
  */
 @SuppressWarnings("FieldCanBeLocal")
 public class PowerCellHolder {
@@ -26,7 +27,7 @@ public class PowerCellHolder {
     private static final double kI = 0.0; //Integrator Constant
     private static double setpoint,error,errorSum;
 
-    private static boolean isGoingToNextPosition = false; //Should rename this to something less dumb
+    private static boolean waitingToChangePosition = false; //Should rename this to something less dumb
 
 
     public static void init() {
@@ -67,24 +68,26 @@ public class PowerCellHolder {
         drumSpinner.set(ControlMode.PercentOutput,drive); //Drive motor based on PI results
 
         //If start is pressed and we are NOT already moving
-        if(m_gamepad.getStartButtonPressed() && !isGoingToNextPosition) {
-            SmartDashboard.putBoolean("DRUM MOVING", true); //Alert operator
-            ballSetter.set(DoubleSolenoid.Value.kReverse); //Retract actuator
-            setpoint = drumSpinner.getSelectedSensorPosition() + ticksBetweenPositions; //Add to PI setpoint
-            isGoingToNextPosition = true;
+        if(m_gamepad.getStartButtonPressed() && !waitingToChangePosition) {
+            SmartDashboard.putBoolean("DRUM READY", true); //Alert operator
+            waitingToChangePosition = true;
         }
 
         if(Math.abs(error) <= tolerance) { //If we are within our tolerance level
-            SmartDashboard.putBoolean("DRUM MOVING", false); //Alert operator
-            ballSetter.set(DoubleSolenoid.Value.kForward); //Extend actuator
-            isGoingToNextPosition = false;
+            SmartDashboard.putBoolean("DRUM READY", false); //Alert operator
+        }
+
+        if(waitingToChangePosition) { //If we want to be moving
+            if(!Flywheel.justShot) { //And we didn't just shoot
+                setpoint = drumSpinner.getSelectedSensorPosition() + ticksBetweenPositions; //Add to PI setpoint
+                waitingToChangePosition = false;
+            }
         }
     }
 
     /**
-     * Reports telemetry to Driver Station. In this case, reports whether or not we're spinning
+     * Unused
      */
-    public static void reportTelemetry() {
-        SmartDashboard.putBoolean("DRUM SPIN", isGoingToNextPosition);
+    public static void reportStatistics() {
     }
 }
