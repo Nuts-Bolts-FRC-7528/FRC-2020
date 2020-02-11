@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.revrobotics.ColorSensorV3;
 import com.team7528.lib.Blinkin;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -26,6 +27,7 @@ public class RobotMap {
     // Control Panel
     public static WPI_TalonSRX controlPanelWheel = new WPI_TalonSRX(0);
     public static DoubleSolenoid m_wheelEjector = new DoubleSolenoid(2,3);
+    public static ColorSensorV3 colors = new ColorSensorV3(I2C.Port.kOnboard);
 
     //PowerCell Shooter
     public static WPI_TalonSRX turretRotator = new WPI_TalonSRX(1);
