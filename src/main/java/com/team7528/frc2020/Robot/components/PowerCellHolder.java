@@ -69,12 +69,12 @@ public class PowerCellHolder {
 
         //If start is pressed and we are NOT already moving
         if(m_gamepad.getStartButtonPressed() && !waitingToChangePosition) {
-            SmartDashboard.putBoolean("DRUM READY", true); //Alert operator
+            SmartDashboard.putBoolean("DRUM READY", false); //Alert operator
             waitingToChangePosition = true;
         }
 
         if(Math.abs(error) <= tolerance) { //If we are within our tolerance level
-            SmartDashboard.putBoolean("DRUM READY", false); //Alert operator
+            SmartDashboard.putBoolean("DRUM READY", true); //Alert operator
         }
 
         if(waitingToChangePosition) { //If we want to be moving
