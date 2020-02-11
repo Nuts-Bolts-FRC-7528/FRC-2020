@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.team7528.frc2020.Robot.auto.AutoModeExecutor;
 import com.team7528.frc2020.Robot.auto.modes.*;
 import com.team7528.frc2020.Robot.components.BallShooter;
+import com.team7528.frc2020.Robot.components.Flywheel;
 import com.team7528.frc2020.Robot.components.PowerCellHolder;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -18,7 +19,6 @@ import java.time.Instant;
 
 import static com.team7528.frc2020.Robot.common.RobotMap.*;
 
-@SuppressWarnings("FieldCanBeLocal")
 public class Robot extends TimedRobot {
 
     //Prints out stats regarding the string builder
@@ -39,7 +39,6 @@ public class Robot extends TimedRobot {
     private AutoModeExecutor rightTurnAuto = new AutoModeExecutor(new RightTurnAuto());
 
     private Double fineControlSpeedDouble;
-    private Double deadBandOption;
 
     private SendableChooser<AutoModeExecutor> autoPicker = new SendableChooser<>();
     private SendableChooser<Double> fineControlSpeed = new SendableChooser<>();
@@ -137,6 +136,8 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         m_blinkin.periodic(); //Set blinkin pattern during robot operation
+
+        SmartDashboard.putNumber("Distance to target", Flywheel.d);
     }
 
     @Override
@@ -151,9 +152,7 @@ public class Robot extends TimedRobot {
         chosenAuto.start();
 
         //Defines the value for dead band
-        deadBandOption = deadBandOptions.getSelected();
-
-        m_drive.setDeadband(deadBandOption);
+        m_drive.setDeadband(deadBandOptions.getSelected());
 
         //Set LED to alliance color
         m_blinkin.setToTeamColor(false);

@@ -1,5 +1,6 @@
 package com.team7528.frc2020.Robot.components;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -8,24 +9,34 @@ import static com.team7528.frc2020.Robot.common.RobotMap.*;
 
 /**
  * Class for the flywheel component
+ *
+ * @author Matthew Correia
  */
-@SuppressWarnings({"unused", "FieldCanBeLocal"})
+@SuppressWarnings({"FieldCanBeLocal", "unused"})
 public class Flywheel implements Component {
 
-    private static boolean justShot; // Whether or not we just shot a ball
+    public static boolean justShot; // Whether or not we just shot a ball
+    private static final double a1 = 104; // The angle the limelight is mounted at
     private static final double h1 = 11.25; // The height the limelight is mounted at
-    private static final double h2 = 98.25; // The height of the target
-    private static final double a1 = 7528; // The angle the limelight is mounted at
-    private static final double kD = 0.07; // Constant for the flywheel speed
-    private static final double k_speedToRPM = 600 / 360.0; // Conversion from the speed parameter to RPM
+    private static final double h2 = 20.25/*98.25*/; // The height of the target
+    private static final double k_distance = 0.07; // Constant for the flywheel speed
+    private static final double kD = 0.07; // D constant for PID loop
     private static final double k_flywheelTolerance = 100; // The flywheel tolerance
-    private static final double k_gearRatio = 1 / 4.0;
-    private static double desiredRPM; // As it says, the desired RPM
-    private static double currentRPM; // The flywheel's current RPM
-    private static double d; // The distance to the target
+    private static final double k_gearRatio = 1 / 4.0; // The gear ratio for the flywheel
+    private static final double kI = 0.07; // I constant for PID loop
+    private static final double kP = 0.07; // P constant for PID loop
+    private static final double k_speedToRPM = 600 / 360.0; // Conversion from the speed parameter to RPM
+    public static double d; // The distance to the target
     private static double a2; // The angle from the limelight
-    private static int loopCount; // Helps print statistics 5 times per second
+    private static double currentRPM; // The flywheel's current RPM
+    private static double desiredRPM; // As it says, the desired RPM
+    private static double error; // The difference between desiredRPM & currentRPM
+    private static double errorRate; // The rate of change for the error
+    private static double errorSum; // The sum of the errors
+    private static double previousError; // The previous iteration's error
+    private static double speed; // The speed to set for the flywheel motor
     private static int actuatorLoopCount; // Makes sure we don't push the actuator in before we shoot
+    private static int loopCount; // Helps us print statistics 5 times per second
     private static NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("limelight"); // The limelight NetworkTable, used to set a2
     private static StringBuilder stats = new StringBuilder(); // StringBuilder for statistics
 
@@ -33,49 +44,73 @@ public class Flywheel implements Component {
      * Resets the iteration counter (loopCount)
      */
     public static void init() {
-        loopCount = 0; // Resets the loopCount
+        loopCount = 0; // Resets the iteration counter (loopCount)
     }
 
     /**
      * Shoots the ball when start is pressed and prints statistics
      */
     public static void periodic() {
-        if (justShot) {
-            if (actuatorLoopCount >= 20) { // Gives the actuator a second to push the ball
-                reset();
-            } else {
-                actuatorLoopCount++;
-            }
-        }
         a2 = limelightTable.getEntry("ty").getDouble(0); // Sets a2, the y position of the target
         currentRPM = flywheelSpinner.getSelectedSensorVelocity() / k_gearRatio; // Gets the flywheel's current RPM
-        d = (h2-h1) / Math.tan(a1+a2); // Finds the distance
-        desiredRPM = 8000 * d * kD / k_gearRatio; // Sets the desired RPM
+        d = (h2-h1) / Math.tan(Math.toRadians(a1+a2)); // Finds the distance
 
-        if (m_gamepad.getStartButtonPressed()) { // If the start button is pressed ...
+        PID();
+        shooting();
+        reportStatistics();
+    }
+
+    /**
+     * Sets up shooting when we are holding start
+     */
+    private static void shooting() {
+        if (m_gamepad.getStartButton()) { // If the start button is pressed ...
             if (Math.abs(desiredRPM - currentRPM) <= k_flywheelTolerance) { // ... and we're close enough to the desired RPM ...
                 if (!justShot) { // ... and we haven't just shot ...
                     shoot(); // ... then shoot
+                } else {
+                    if (actuatorLoopCount >= 20) { // give the actuator a second to push the ball
+                        reset();
+                    } else {
+                        actuatorLoopCount++; // Increments actuatorLoopCount
+                    }
                 }
             } else { // If we aren't at the desired RPM ...
-                flywheelSpinner.set(desiredRPM / k_speedToRPM); // ... set the motor speed to the desired RPM
-            } // This is the speed parameter ^^; k_speedToRPM converts what we set it to into RPM
+                flywheelSpinner.set(ControlMode.Velocity, speed); // ... set the motor speed to the desired RPM
+            }
         }
+    }
 
-        loopCount++; // Increments loopCount
-        if (loopCount >= 10) { // If a fifth of a second has passed ...
-            reportStatistics(); // ... reports statistics ...
-            loopCount = 0; // ... and reset the loopCount
+    /**
+     * PID loop method
+     */
+    private static void PID() {
+        error = (desiredRPM - currentRPM) / k_speedToRPM;
+        if (Math.abs(error) <= 500) { // If the error is less than or equal to 500 ...
+            errorSum += error; // Add it to the error sum
         }
+        if (errorSum >= 2000) { // If the error sum gets too high ...
+            errorSum = 2000; // ... set it to the maximum
+        } else if (errorSum <= -2000) {
+            errorSum = -2000;
+        }
+        errorRate = (error - previousError) / 0.02;
+        speed = (kP * error + kI * errorSum + kD * errorRate);
+        desiredRPM = speed * d * k_distance / k_gearRatio; // Sets the desired RPM
+        previousError = error;
     }
 
     /**
      * Reports the current flywheel RPM, then resets the String Builder (stats)
      */
     private static void reportStatistics() {
-        stats.append("Current flywheel RPM: ").append(currentRPM); // The current flywheel RPM
-        System.out.println(stats); // Print the stats variable (current flywheel RPM)
-        stats.setLength(0); // And clear the stats variable to get it ready for the next print
+        loopCount++;
+        if (loopCount >= 10) {
+            stats.append("Current flywheel RPM: ").append(currentRPM); // The current flywheel RPM
+            System.out.println(stats); // Print the stats variable (current flywheel RPM)
+            stats.setLength(0); // And clear the stats variable to get it ready for the next print
+            loopCount = 0;
+        }
     }
 
     /**
@@ -83,7 +118,7 @@ public class Flywheel implements Component {
      */
     private static void shoot() {
         ballSetter.set(DoubleSolenoid.Value.kForward); // Push the ball into the shooter
-        justShot = true; // and set justShot to true
+        justShot = true; // an-d set justShot to true
     }
 
     /**
