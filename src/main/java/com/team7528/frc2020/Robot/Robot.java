@@ -3,9 +3,7 @@ package com.team7528.frc2020.Robot;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.team7528.frc2020.Robot.auto.AutoModeExecutor;
 import com.team7528.frc2020.Robot.auto.modes.*;
-import com.team7528.frc2020.Robot.components.BallShooter;
 import com.team7528.frc2020.Robot.components.Flywheel;
-import com.team7528.frc2020.Robot.components.PowerCellHolder;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -69,9 +67,8 @@ public class Robot extends TimedRobot {
         m_leftFront.setSensorPhase(false);
         m_rightFront.setSensorPhase(true); //Right side encoder is inverted
 
-        //Initialize components
-        BallShooter.init();
-        PowerCellHolder.init();
+        //Initialize Components
+        Flywheel.init();
 
         //Reset encoders to 0
         m_leftFront.setSelectedSensorPosition(0,0,10);
@@ -145,7 +142,6 @@ public class Robot extends TimedRobot {
         //Reset encoders to 0
         m_leftFront.setSelectedSensorPosition(0,0,10);
         m_rightFront.setSelectedSensorPosition(0,0,10);
-        PowerCellHolder.resetEncoder();
 
         //Start Auto
         AutoModeExecutor chosenAuto = autoPicker.getSelected();
@@ -171,7 +167,6 @@ public class Robot extends TimedRobot {
         }
 
         //Continue PowerCell usage during autonomous
-        PowerCellHolder.periodic();
     }
 
     /**
@@ -191,9 +186,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopPeriodic() {
-        //Periodic logic for components
-        BallShooter.periodic();
-        PowerCellHolder.periodic();
 
         //Sets up for fine control
 
@@ -216,6 +208,9 @@ public class Robot extends TimedRobot {
 //            printStats();
             looperCounter = 0;
         }
+
+        // Periodic logic for components
+        Flywheel.periodic();
     }
 
     @Override
@@ -237,8 +232,5 @@ public class Robot extends TimedRobot {
 
         //Prints out the string builder
         System.out.println(_sb.toString());
-
-        BallShooter.reportStatistics();
-
     }
 }

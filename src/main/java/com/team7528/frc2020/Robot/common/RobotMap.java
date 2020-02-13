@@ -32,11 +32,7 @@ public class RobotMap {
     //PowerCell Shooter
     public static WPI_TalonSRX turretRotator = new WPI_TalonSRX(1);
     public static WPI_TalonSRX flywheelSpinner = new WPI_TalonSRX(2);
-    public static WPI_TalonSRX hood = new WPI_TalonSRX(3);
-    public static DoubleSolenoid ballSetter = new DoubleSolenoid(2,3);
-
-    //PowerCell holder drum spinner
-    public static TalonSRX drumSpinner = new TalonSRX(4);
+    public static WPI_TalonSRX ballConveyor = new WPI_TalonSRX(3);
 
     //Operator interface
     public static Joystick m_joy = new Joystick(0); //For chassis driver

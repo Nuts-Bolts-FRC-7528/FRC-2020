@@ -3,7 +3,6 @@ package com.team7528.frc2020.Robot.components;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 import static com.team7528.frc2020.Robot.common.RobotMap.*;
 
@@ -12,13 +11,12 @@ import static com.team7528.frc2020.Robot.common.RobotMap.*;
  *
  * @author Matthew Correia
  */
-@SuppressWarnings({"FieldCanBeLocal", "unused"})
-public class Flywheel implements Component {
+@SuppressWarnings({"FieldCanBeLocal"})
+public class Flywheel {
 
-    public static boolean justShot; // Whether or not we just shot a ball
     private static final double a1 = 104; // The angle the limelight is mounted at
     private static final double h1 = 11.25; // The height the limelight is mounted at
-    private static final double h2 = 20.25/*98.25*/; // The height of the target
+    private static final double h2 = 20.25/*Full Height: 98.25*/; // The height of the target
     private static final double k_distance = 0.07; // Constant for the flywheel speed
     private static final double kD = 0.07; // D constant for PID loop
     private static final double k_flywheelTolerance = 100; // The flywheel tolerance
@@ -35,7 +33,6 @@ public class Flywheel implements Component {
     private static double errorSum; // The sum of the errors
     private static double previousError; // The previous iteration's error
     private static double speed; // The speed to set for the flywheel motor
-    private static int actuatorLoopCount; // Makes sure we don't push the actuator in before we shoot
     private static int loopCount; // Helps us print statistics 5 times per second
     private static NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("limelight"); // The limelight NetworkTable, used to set a2
     private static StringBuilder stats = new StringBuilder(); // StringBuilder for statistics
@@ -66,15 +63,7 @@ public class Flywheel implements Component {
     private static void shooting() {
         if (m_gamepad.getStartButton()) { // If the start button is pressed ...
             if (Math.abs(desiredRPM - currentRPM) <= k_flywheelTolerance) { // ... and we're close enough to the desired RPM ...
-                if (!justShot) { // ... and we haven't just shot ...
-                    shoot(); // ... then shoot
-                } else {
-                    if (actuatorLoopCount >= 20) { // give the actuator a second to push the ball
-                        reset();
-                    } else {
-                        actuatorLoopCount++; // Increments actuatorLoopCount
-                    }
-                }
+                shoot(); // ... then shoot
             } else { // If we aren't at the desired RPM ...
                 flywheelSpinner.set(ControlMode.Velocity, speed); // ... set the motor speed to the desired RPM
             }
@@ -117,16 +106,6 @@ public class Flywheel implements Component {
      * Shoots the ball
      */
     private static void shoot() {
-        ballSetter.set(DoubleSolenoid.Value.kForward); // Push the ball into the shooter
-        justShot = true; // an-d set justShot to true
-    }
-
-    /**
-     * Resets the actuator
-     */
-    private static void reset() {
-        ballSetter.set(DoubleSolenoid.Value.kReverse); // Pull in the actuator
-        justShot = false; // and set justShot to false
-        actuatorLoopCount = 0;
+        ballConveyor.set(0.2);
     }
 }
