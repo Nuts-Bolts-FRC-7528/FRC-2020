@@ -135,6 +135,9 @@ public class Robot extends TimedRobot {
         m_blinkin.periodic(); //Set blinkin pattern during robot operation
 
         SmartDashboard.putNumber("Distance to target", Flywheel.d);
+
+        // Periodic logic for components
+        Flywheel.periodic();
     }
 
     @Override
@@ -208,9 +211,6 @@ public class Robot extends TimedRobot {
 //            printStats();
             looperCounter = 0;
         }
-
-        // Periodic logic for components
-        Flywheel.periodic();
     }
 
     @Override
