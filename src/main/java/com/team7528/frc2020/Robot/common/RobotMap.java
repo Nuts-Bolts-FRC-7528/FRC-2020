@@ -16,23 +16,23 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 public class RobotMap {
 
     //Drive train
-    public static WPI_TalonFX m_leftAft = new WPI_TalonFX(0);
-    public static WPI_TalonFX m_leftFront = new WPI_TalonFX(1);
-    public static WPI_TalonFX m_rightAft = new WPI_TalonFX(2);
-    public static WPI_TalonFX m_rightFront = new WPI_TalonFX(3);
+    public static WPI_TalonFX m_leftAft = new WPI_TalonFX(1);
+    public static WPI_TalonFX m_leftFront = new WPI_TalonFX(2);
+    public static WPI_TalonFX m_rightAft = new WPI_TalonFX(3);
+    public static WPI_TalonFX m_rightFront = new WPI_TalonFX(4);
 
     //Creates a new variable for how the wheels of the robot will move
     public static DifferentialDrive m_drive;
 
     // Control Panel
-    public static WPI_TalonSRX controlPanelWheel = new WPI_TalonSRX(0);
+    public static WPI_TalonSRX controlPanelWheel = new WPI_TalonSRX(4);
     public static DoubleSolenoid m_wheelEjector = new DoubleSolenoid(2,3);
     public static ColorSensorV3 colors = new ColorSensorV3(I2C.Port.kOnboard);
 
     //PowerCell Shooter
-    public static WPI_TalonSRX turretRotator = new WPI_TalonSRX(1);
-    public static WPI_TalonSRX flywheelSpinner = new WPI_TalonSRX(2);
-    public static WPI_TalonSRX ballConveyor = new WPI_TalonSRX(3);
+    public static WPI_TalonSRX turretRotator = new WPI_TalonSRX(5);
+    public static WPI_TalonSRX flywheelSpinner = new WPI_TalonSRX(6);
+    public static WPI_TalonSRX ballConveyor = new WPI_TalonSRX(7);
 
     //Operator interface
     public static Joystick m_joy = new Joystick(0); //For chassis driver
