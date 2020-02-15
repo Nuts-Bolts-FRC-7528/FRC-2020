@@ -7,12 +7,12 @@ import static com.team7528.frc2020.Robot.common.RobotMap.*;
 @SuppressWarnings("FieldCanBeLocal")
 public class DriveForwardActionEncoder implements Action {
     //Instantiating variables
-    private double movingPower; //power of motors
-    private int movingSeconds; //time for moving
-    private final double kP = 0.07; //P constant
+    private final double kP = 0.07; // P constant
     private double error;
+    private double movingPower; // Power of motors
+    private double startTime; // FPGA timestamp at the start of the WaitAction
     private double turn_power;
-    private double startTime; //FPGA timestamp at the start of the WaitAction
+    private int movingSeconds; // Time for moving
     /**
      * Constructor for DriveForwardActionEncoder
      *

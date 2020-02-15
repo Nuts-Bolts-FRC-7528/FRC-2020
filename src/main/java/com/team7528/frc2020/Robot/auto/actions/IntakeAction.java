@@ -24,7 +24,7 @@ public class IntakeAction implements Action {
     public void start() {/*
         //DoubleSolenoid.Value.kForward
         //DoubleSolenoid.Value.kReverse
-        if(intake.get()==DoubleSolenoid.Value.kForward) {
+        /*if(intake.get()==DoubleSolenoid.Value.kForward) {
 
         }
         if(intake.get()==DoubleSolenoid.Value.kReverse){
