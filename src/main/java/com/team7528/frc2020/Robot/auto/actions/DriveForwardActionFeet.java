@@ -3,7 +3,7 @@ package com.team7528.frc2020.Robot.auto.actions;
 import static com.team7528.frc2020.Robot.common.RobotMap.*;
 
 @SuppressWarnings("FieldCanBeLocal")
-public class DriveForwardActionDegrees implements Action {
+public class DriveForwardActionFeet implements Action {
 
     private double degreesToMove; // How many ticks to move
     private final double degreesToInches = 1.0 / 360 * 1.0 / 4.0 * 6;
@@ -33,7 +33,7 @@ public class DriveForwardActionDegrees implements Action {
      *
      * @param inches How far we want to go, in inches
      */
-    public DriveForwardActionDegrees(double inches) {
+    public DriveForwardActionFeet(double inches) {
         degreesToMove = inches / degreesToInches;
     }
 
