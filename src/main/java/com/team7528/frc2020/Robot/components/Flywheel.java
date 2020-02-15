@@ -117,7 +117,7 @@ public class Flywheel implements Component {
      * Shoots the ball
      */
     private static void shoot() {
-        ballSetter.set(DoubleSolenoid.Value.kForward); // Push the ball into the shooter
+        //ballSetter.set(DoubleSolenoid.Value.kForward); // Push the ball into the shooter
         justShot = true; // an-d set justShot to true
     }
 
@@ -125,7 +125,7 @@ public class Flywheel implements Component {
      * Resets the actuator
      */
     private static void reset() {
-        ballSetter.set(DoubleSolenoid.Value.kReverse); // Pull in the actuator
+        //ballSetter.set(DoubleSolenoid.Value.kReverse); // Pull in the actuator
         justShot = false; // and set justShot to false
         actuatorLoopCount = 0;
     }

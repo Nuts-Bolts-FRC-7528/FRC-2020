@@ -8,7 +8,7 @@ import static com.team7528.frc2020.Robot.common.RobotMap.*;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.util.Color;
 
-public class ControlPanel {
+public class ControlPanel {/*
     public static void init() {
 
     }
@@ -66,5 +66,5 @@ public class ControlPanel {
     public static void reportSatistics() {
 
     }
-
+*/
 }

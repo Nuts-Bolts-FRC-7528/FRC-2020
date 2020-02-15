@@ -21,15 +21,15 @@ public static int ballAmount = 0;
 
         }
         if(m_gamepad.getBumper(GenericHID.Hand.kRight)) { //if right bumper is pressed
-            intake.set(DoubleSolenoid.Value.kReverse); //drops piston
+            //intake.set(DoubleSolenoid.Value.kReverse); //drops piston
             intakeMotor.set(ControlMode.PercentOutput,-1); //moves wheels to intake balls
         }
         if(m_gamepad.getBumper(GenericHID.Hand.kLeft)) { //if left bumper is pressed
-            intake.set(DoubleSolenoid.Value.kReverse); //drops piston
+//            intake.set(DoubleSolenoid.Value.kReverse); //drops piston
             intakeMotor.set(ControlMode.PercentOutput, 1); //moves wheel to eject balls
         }
         if(m_gamepad.getYButton()) { //if Y button is pressed
-            intake.set(DoubleSolenoid.Value.kForward); //raises piston
+//            intake.set(DoubleSolenoid.Value.kForward); //raises piston
             intakeMotor.set(ControlMode.PercentOutput, 0); //does not move wheels
         }
     }

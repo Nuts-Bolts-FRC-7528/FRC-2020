@@ -2,7 +2,7 @@ package com.team7528.frc2020.Robot.auto.actions;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
-import static com.team7528.frc2020.Robot.common.RobotMap.intake;
+//import static com.team7528.frc2020.Robot.common.RobotMap.intake;
 
 public class IntakeAction implements Action {
     @Override
@@ -21,7 +21,7 @@ public class IntakeAction implements Action {
     }
 
     @Override
-    public void start() {
+    public void start() {/*
         //DoubleSolenoid.Value.kForward
         //DoubleSolenoid.Value.kReverse
         if(intake.get()==DoubleSolenoid.Value.kForward) {
@@ -29,6 +29,6 @@ public class IntakeAction implements Action {
         }
         if(intake.get()==DoubleSolenoid.Value.kReverse){
 
-        }
+        }*/
     }
 }

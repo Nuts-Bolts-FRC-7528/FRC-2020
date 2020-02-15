@@ -27,13 +27,13 @@ public class RobotMap {
     // Control Panel
     public static WPI_TalonSRX controlPanelWheel = new WPI_TalonSRX(0);
     public static DoubleSolenoid m_wheelEjector = new DoubleSolenoid(2,3);
-    public static ColorSensorV3 colors = new ColorSensorV3(I2C.Port.kOnboard);
+//    public static ColorSensorV3 colors = new ColorSensorV3(I2C.Port.kOnboard);
 
     //PowerCell Shooter
     public static WPI_TalonSRX turretRotator = new WPI_TalonSRX(1);
     public static WPI_TalonSRX flywheelSpinner = new WPI_TalonSRX(2);
     public static WPI_TalonSRX hood = new WPI_TalonSRX(3);
-    public static DoubleSolenoid ballSetter = new DoubleSolenoid(2,3);
+//    public static DoubleSolenoid ballSetter = new DoubleSolenoid(2,3);
 
     //PowerCell holder drum spinner
     public static TalonSRX drumSpinner = new TalonSRX(4);
@@ -46,7 +46,7 @@ public class RobotMap {
     public static AnalogGyro gyroScope = new AnalogGyro(0);
 
     //Intake
-    public static DoubleSolenoid intake = new DoubleSolenoid(1,2);
+//    public static DoubleSolenoid intake = new DoubleSolenoid(1,2);
     public static VictorSPX intakeMotor = new VictorSPX(0);
     public static DigitalInput ballCounter = new DigitalInput(0);
 
