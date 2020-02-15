@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.sensors.PigeonIMU;
 import com.revrobotics.ColorSensorV3;
 import com.team7528.lib.Blinkin;
 import edu.wpi.first.wpilibj.*;
@@ -13,6 +14,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
  * Initiates both the motor controllers and joystick
  */
 
+@SuppressWarnings({"SpellCheckingInspection", "unused"})
 public class RobotMap {
 
     //Drive train
@@ -38,8 +40,8 @@ public class RobotMap {
     public static Joystick m_joy = new Joystick(0); //For chassis driver
     public static XboxController m_gamepad = new XboxController(1); //For manipulator
 
-    //Gyroscope
-    public static AnalogGyro gyroScope = new AnalogGyro(0);
+    // Gyroscope
+    public static PigeonIMU gyroScope = new PigeonIMU(0);
 
     //Intake
 //    public static DoubleSolenoid intake = new DoubleSolenoid(1,2);

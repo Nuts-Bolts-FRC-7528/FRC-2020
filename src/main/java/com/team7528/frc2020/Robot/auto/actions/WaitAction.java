@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj.Timer;
  * @see Action
  */
 public class WaitAction implements Action {
-    private double timeToWait; //Amount of time to wait in seconds
-    private double startTime; //FPGA timestamp at the start of the WaitAction
+    private double startTime; // FPGA timestamp at the start of the WaitAction
+    private double timeToWait; // Amount of time to wait in seconds
 
     /**
      * Constructor for a new WaitAction

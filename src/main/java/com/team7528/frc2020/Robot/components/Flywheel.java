@@ -15,8 +15,8 @@ import static com.team7528.frc2020.Robot.common.RobotMap.*;
 public class Flywheel {
 
     private static final double a1 = 42; // The angle the limelight is mounted at
-    private static final double h1 = 11.625/*Non-block Height: 11.25*/; // The height the limelight is mounted at
-    private static final double h2 = 20.25/*Full Height: 98.25*/; // The height of the target
+    private static final double h1 = 11.625 /* Non-block Height: 11.25 */ ; // The height the limelight is mounted at
+    private static final double h2 = 20.25 /* Full Height: 98.25 */ ; // The height of the target
     private static final double k_distance = 0.07; // Constant for the flywheel speed
     private static final double kD = 0.07; // D constant for PID loop
     private static final double k_flywheelTolerance = 100; // The flywheel tolerance
@@ -24,9 +24,9 @@ public class Flywheel {
     private static final double kI = 0.07; // I constant for PID loop
     private static final double kP = 0.07; // P constant for PID loop
     private static final double k_speedToRPM = 600 / 360.0; // Conversion from the speed parameter to RPM
-    public static double d; // The distance to the target
     private static double a2; // The angle from the limelight
     private static double currentRPM; // The flywheel's current RPM
+    public static double d; // The distance to the target
     private static double desiredRPM; // As it says, the desired RPM
     private static double error; // The difference between desiredRPM & currentRPM
     private static double errorRate; // The rate of change for the error

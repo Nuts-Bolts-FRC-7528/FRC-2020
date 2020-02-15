@@ -7,13 +7,15 @@ import static com.team7528.frc2020.Robot.common.RobotMap.*;
 @SuppressWarnings("FieldCanBeLocal")
 public class DriveForwardActionGyro implements Action {
     //Instantiating variables
-    private double desiredGyroAngle; //Setpoint
-    private double movingPower; //power of motors
-    private int movingSeconds; //time for moving
-    private final double kP = 0.07; //P constant
+    private final double kP = 0.07; // P constant
+    private double desiredGyroAngle; // Setpoint
     private double error;
+    private double movingPower; // Power of motors
+    private double startTime; // FPGA timestamp at the start of the WaitAction
     private double turn_power;
-    private double startTime; //FPGA timestamp at the start of the WaitAction
+    public static double[] ypr; // Public double array for actions including the Gyro
+    private int movingSeconds; // Time for moving
+
     /**
      * Constructor for DriveForwardActionGyro
      *
@@ -41,7 +43,7 @@ public class DriveForwardActionGyro implements Action {
      */
     @Override
     public void update() {
-        error = desiredGyroAngle - gyroScope.getAngle(); //the difference between the desired angle and the current angle
+        error = desiredGyroAngle - gyroScope.getYawPitchRoll(ypr).value; //the difference between the desired angle and the current angle
         turn_power = kP * error; //how much power to turn with
         m_drive.arcadeDrive(movingPower, turn_power); //driving the robot
     }
@@ -55,5 +57,6 @@ public class DriveForwardActionGyro implements Action {
     @Override
     public void start() {
         startTime = Timer.getFPGATimestamp();
+        ypr = new double[]{0.0, 0.0, 0.0};
     }
 }
