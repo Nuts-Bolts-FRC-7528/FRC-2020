@@ -63,10 +63,10 @@ public class Robot extends TimedRobot {
         m_rightAft.configFactoryDefault();
 
         //Initialize encoders
-        m_leftFront.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-        m_rightFront.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-        m_leftFront.setSensorPhase(false);
-        m_rightFront.setSensorPhase(true); //Right side encoder is inverted
+        m_leftFront.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+        m_rightFront.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+        m_leftFront.setSensorPhase(true);
+        m_rightFront.setSensorPhase(false);
 
         //Initialize Components
         Flywheel.init();
@@ -94,7 +94,7 @@ public class Robot extends TimedRobot {
         autoPicker.addOption("Turn Right", rightTurnAuto);
         autoPicker.addOption("Turn Around", uTurnAuto);
         autoPicker.addOption("Turn Left", leftTurnAuto);
-        SmartDashboard.putData("Auto Mode", autoPicker);
+        Shuffleboard.getTab("DRIVETRAIN").add("Auto Mode", autoPicker);
 
         // Fine Control Speed choosing
         fineControlSpeed.addOption("35% Speed", 0.35);
@@ -130,12 +130,17 @@ public class Robot extends TimedRobot {
 
         //Transmits video through cameras
         CameraServer.getInstance().startAutomaticCapture();
+
+        Shuffleboard.getTab("DRIVETRAIN").add("Left Encoder", -m_leftFront.getSelectedSensorPosition());
+        Shuffleboard.getTab("DRIVETRAIN").add("Right Encoder", m_rightFront.getSelectedSensorPosition());
     }
 
     @Override
     public void robotPeriodic() {
         m_blinkin.periodic(); //Set blinkin pattern during robot operation
 
+//        SmartDashboard.putNumber("Left Front Encoder", -m_leftFront.getSelectedSensorPosition());
+//        SmartDashboard.putNumber("Right Front Encoder", m_rightFront.getSelectedSensorPosition());
         SmartDashboard.putNumber("Distance to target", Flywheel.d); //Display distance from limelight to power port to Shuffleboard (DEBUG)
     }
 
@@ -162,11 +167,11 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         //Prints Stats during auto
-        looperCounter++;
-        if (looperCounter >= 10) {
+        //looperCounter++;
+        /*f (looperCounter >= 10) {
             printStats();
             looperCounter = 0;
-        }
+        }*/
     }
 
     /**
@@ -220,6 +225,7 @@ public class Robot extends TimedRobot {
         //Stops Auto
         AutoModeExecutor chosenAuto = autoPicker.getSelected();
         chosenAuto.stop();
+        driveForwardAutoFeet.stop();
     }
 
     /**

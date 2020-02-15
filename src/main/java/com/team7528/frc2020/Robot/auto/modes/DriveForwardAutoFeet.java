@@ -13,5 +13,6 @@ public class DriveForwardAutoFeet extends AutoModeBase {
     protected void routine() throws AutoModeDoneException {
         runAction(new DriveForwardActionFeet(60)); // Drives 5 feet (60 inches) forward
         runAction(new WaitAction(15)); // Then waits for the rest of autonomous (set as 15 just to be safe)
+        //Issues known with the robot rushing to WaitAction
     }
 }
