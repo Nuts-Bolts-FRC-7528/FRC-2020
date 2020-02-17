@@ -1,18 +1,21 @@
 package com.team7528.frc2020.Robot.auto.actions;
 
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+
 import static com.team7528.frc2020.Robot.common.RobotMap.*;
 
 @SuppressWarnings("FieldCanBeLocal")
-public class DriveForwardActionDegrees implements Action {
+public class DriveForwardActionFeet implements Action {
 
     private double degreesToMove; // How many ticks to move
     private final double degreesToInches = 1.0 / 360 * 1.0 / 4.0 * 6;
     // Annotation for degrees to inches: 1 rotation / 360 degrees * gear ratio * wheel size
 
-    private final double kP = 0.07; // P constant
-    private final double kI = 0.07; // I constant
-    private final double kD = 0.07; // D constant
-    private final double kP2 = 0.07; // P constant for encoder velocity
+    private final double kP = 0.00003; // P constant
+    private final double kI = 0.0; // I constant
+    private final double kD = 0.0; // D constant
+    private final double kP2 = 1; // P constant for encoder velocity
 
     private int degreesMoved; // How many ticks we have moved
 
@@ -25,6 +28,7 @@ public class DriveForwardActionDegrees implements Action {
     private double error; // The distance between where we are and where we want to be
     private double previousError; // The previous iteration's error
     private double error2; // The difference between the encoder velocities
+    private double startTime;
 
     private double check; // Integrator zone
 
@@ -33,13 +37,14 @@ public class DriveForwardActionDegrees implements Action {
      *
      * @param inches How far we want to go, in inches
      */
-    public DriveForwardActionDegrees(double inches) {
+    public DriveForwardActionFeet(double inches) {
         degreesToMove = inches / degreesToInches;
     }
 
     @Override
     public boolean finished() {
-        return error == 0; // Returns true when we have moved how far we wanted to
+        return Math.abs(degreesToMove) == degreesMoved || Timer.getFPGATimestamp() - startTime >= 5; // Returns true when we have moved how far we wanted to
+        //DEBUG: Will also end if 5 seconds have passed
     }
 
     @Override
@@ -52,26 +57,26 @@ public class DriveForwardActionDegrees implements Action {
             check = previousError;
         }
 
-        error = degreesToMove - degreesMoved; // Sets the error equal to how far we want to have moved minus how far we have moved
+        error = -(-degreesToMove - degreesMoved); // Sets the error equal to how far we want to have moved minus how far we have moved
 
         speed = kP * error + kI * check + kD * ((error - previousError) / 0.02); // Sets the speed based off the error & the previous error
 
-        degreesMoved += ((m_leftFront.getSelectedSensorPosition() - previousPositionLeft) + (m_rightFront.getSelectedSensorPosition() - previousPositionRight)) / 2;
+        degreesMoved += ((-m_leftFront.getSelectedSensorPosition()) + (m_rightFront.getSelectedSensorPosition())) / 2;
 
-        previousPositionLeft = m_leftFront.getSelectedSensorPosition(); // Gets the previous left encoder position
+        previousPositionLeft = -m_leftFront.getSelectedSensorPosition(); // Gets the previous left encoder position
         previousPositionRight = m_rightFront.getSelectedSensorPosition(); // Gets the previous right encoder position
 
-        error2 = m_leftFront.getSelectedSensorVelocity() - m_rightFront.getSelectedSensorVelocity(); //gets the difference between the motor velocities
+        error2 = -m_leftFront.getSelectedSensorVelocity() - m_rightFront.getSelectedSensorVelocity(); //gets the difference between the motor velocities
         turn_power = kP2 * error2; //how much power to turn with
 
-        m_drive.arcadeDrive(speed, turn_power); // Drives the robot
+        m_drive.arcadeDrive(speed,0 * turn_power); // Drives the robot
 
 
     }
 
     @Override
     public void done() {
-
+        m_drive.setSafetyEnabled(false);
     }
 
     @Override
@@ -79,5 +84,11 @@ public class DriveForwardActionDegrees implements Action {
         // Resetting the encoders
         m_leftFront.setSelectedSensorPosition(0,0,10);
         m_rightFront.setSelectedSensorPosition(0,0,10);
+
+        m_drive.setSafetyEnabled(false);
+        startTime = Timer.getFPGATimestamp();
+
+        Shuffleboard.getTab("DRIVETRAIN").add("Degrees moved", -degreesMoved); //DEBUG
+        Shuffleboard.getTab("DRIVETRAIN").add("Degrees to move", degreesToMove); //DEBUG
     }
 }

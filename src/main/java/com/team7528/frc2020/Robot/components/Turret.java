@@ -5,10 +5,12 @@ import static com.team7528.frc2020.Robot.common.RobotMap.m_gamepad;
 import static com.team7528.frc2020.Robot.common.RobotMap.turretRotator;
 
 /**
+ * @author Luis Carrillo
+ *
  * Code will operate by spinning either left or right until a target is detected
  */
 
-public class Turret {
+public class Turret { // a class meant for the turret rotation
 
     private static StringBuilder stats = new StringBuilder();
     private static double currentRPM;

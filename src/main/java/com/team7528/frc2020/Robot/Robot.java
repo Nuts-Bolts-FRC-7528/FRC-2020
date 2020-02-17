@@ -2,10 +2,9 @@ package com.team7528.frc2020.Robot;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.team7528.frc2020.Robot.auto.AutoModeExecutor;
+import com.team7528.frc2020.Robot.auto.actions.DriveForwardActionFeet;
 import com.team7528.frc2020.Robot.auto.modes.*;
-import com.team7528.frc2020.Robot.components.BallShooter;
 import com.team7528.frc2020.Robot.components.Flywheel;
-import com.team7528.frc2020.Robot.components.PowerCellHolder;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -30,7 +29,7 @@ public class Robot extends TimedRobot {
     private AutoModeExecutor doNothingAuto = new AutoModeExecutor(new DoNothingAuto());
     private AutoModeExecutor moveForwardAutoGyro = new AutoModeExecutor(new MoveForwardAutoGyro());
     private AutoModeExecutor moveForwardAutoEncoder = new AutoModeExecutor(new MoveForwardAutoEncoder());
-    private AutoModeExecutor driveForwardAutoDegrees = new AutoModeExecutor(new DriveForwardAutoDegrees());
+    private AutoModeExecutor driveForwardAutoFeet = new AutoModeExecutor(new DriveForwardAutoFeet());
     private AutoModeExecutor oneWheelTurnRightAuto = new AutoModeExecutor(new OneWheelTurnRightAuto());
     private AutoModeExecutor oneWheelTurnBackAuto = new AutoModeExecutor(new OneWheelTurnBackAuto());
     private AutoModeExecutor oneWheelTurnLeftAuto = new AutoModeExecutor(new OneWheelTurnLeftAuto());
@@ -64,14 +63,13 @@ public class Robot extends TimedRobot {
         m_rightAft.configFactoryDefault();
 
         //Initialize encoders
-        m_leftFront.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-        m_rightFront.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-        m_leftFront.setSensorPhase(false);
-        m_rightFront.setSensorPhase(true); //Right side encoder is inverted
+        m_leftFront.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+        m_rightFront.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+        m_leftFront.setSensorPhase(true);
+        m_rightFront.setSensorPhase(false);
 
-        //Initialize components
-        BallShooter.init();
-        PowerCellHolder.init();
+        //Initialize Components
+        Flywheel.init();
 
         //Reset encoders to 0
         m_leftFront.setSelectedSensorPosition(0,0,10);
@@ -81,21 +79,22 @@ public class Robot extends TimedRobot {
         m_leftAft.follow(m_leftFront);
         m_rightAft.follow(m_rightFront);
 
-        // Invert the right motors
-        m_rightFront.setInverted(true);
+        // Invert the left motors
+        m_leftFront.setInverted(false);
+        m_rightFront.setInverted(false);
 
         //Auto code choosing
         autoPicker.setDefaultOption("Do Nothing", doNothingAuto);
         autoPicker.addOption("Move Forward (Gyro)", moveForwardAutoGyro);
         autoPicker.addOption("Move Forward (Encoder)", moveForwardAutoEncoder);
-        autoPicker.addOption("Move Forward (Degrees)", driveForwardAutoDegrees);
+        autoPicker.addOption("Move Forward (Feet)", driveForwardAutoFeet);
         autoPicker.addOption("Turn Right (One Wheel)", oneWheelTurnRightAuto);
         autoPicker.addOption("Turn Around (One Wheel)", oneWheelTurnBackAuto);
         autoPicker.addOption("Turn Left (One Wheel)", oneWheelTurnLeftAuto);
         autoPicker.addOption("Turn Right", rightTurnAuto);
         autoPicker.addOption("Turn Around", uTurnAuto);
         autoPicker.addOption("Turn Left", leftTurnAuto);
-        SmartDashboard.putData("Auto Mode", autoPicker);
+        Shuffleboard.getTab("DRIVETRAIN").add("Auto Mode", autoPicker);
 
         // Fine Control Speed choosing
         fineControlSpeed.addOption("35% Speed", 0.35);
@@ -131,13 +130,18 @@ public class Robot extends TimedRobot {
 
         //Transmits video through cameras
         CameraServer.getInstance().startAutomaticCapture();
+
+        Shuffleboard.getTab("DRIVETRAIN").add("Left Encoder", -m_leftFront.getSelectedSensorPosition());
+        Shuffleboard.getTab("DRIVETRAIN").add("Right Encoder", m_rightFront.getSelectedSensorPosition());
     }
 
     @Override
     public void robotPeriodic() {
         m_blinkin.periodic(); //Set blinkin pattern during robot operation
 
-        SmartDashboard.putNumber("Distance to target", Flywheel.d);
+//        SmartDashboard.putNumber("Left Front Encoder", -m_leftFront.getSelectedSensorPosition());
+//        SmartDashboard.putNumber("Right Front Encoder", m_rightFront.getSelectedSensorPosition());
+        SmartDashboard.putNumber("Distance to target", Flywheel.d); //Display distance from limelight to power port to Shuffleboard (DEBUG)
     }
 
     @Override
@@ -145,7 +149,6 @@ public class Robot extends TimedRobot {
         //Reset encoders to 0
         m_leftFront.setSelectedSensorPosition(0,0,10);
         m_rightFront.setSelectedSensorPosition(0,0,10);
-        PowerCellHolder.resetEncoder();
 
         //Start Auto
         AutoModeExecutor chosenAuto = autoPicker.getSelected();
@@ -164,14 +167,11 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         //Prints Stats during auto
-        looperCounter++;
-        if (looperCounter >= 10) {
+        //looperCounter++;
+        /*f (looperCounter >= 10) {
             printStats();
             looperCounter = 0;
-        }
-
-        //Continue PowerCell usage during autonomous
-        PowerCellHolder.periodic();
+        }*/
     }
 
     /**
@@ -191,23 +191,20 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopPeriodic() {
-        //Periodic logic for components
-        BallShooter.periodic();
-        PowerCellHolder.periodic();
 
         //Sets up for fine control
 
         if (m_joy.getPOV() == 0) { //Forward
-            m_drive.arcadeDrive(fineControlSpeedDouble,0);
-        } else if (m_joy.getPOV() == 90) { //Right
-            m_drive.arcadeDrive(0,fineControlSpeedDouble);
-        } else if (m_joy.getPOV() == 180) { //Backward
             m_drive.arcadeDrive(-fineControlSpeedDouble,0);
-        } else if (m_joy.getPOV() == 270) { //Left
+        } else if (m_joy.getPOV() == 90) { //Right
             m_drive.arcadeDrive(0,-fineControlSpeedDouble);
+        } else if (m_joy.getPOV() == 180) { //Backward
+            m_drive.arcadeDrive(fineControlSpeedDouble,0);
+        } else if (m_joy.getPOV() == 270) { //Left
+            m_drive.arcadeDrive(0,fineControlSpeedDouble);
         } else {
             //Sets up arcade drive
-            m_drive.arcadeDrive(-m_joy.getY(), m_joy.getX());
+            m_drive.arcadeDrive(m_joy.getY(), -m_joy.getX());
         }
 
         //Prints out diagnostics
@@ -216,11 +213,19 @@ public class Robot extends TimedRobot {
 //            printStats();
             looperCounter = 0;
         }
+
+        // Periodic logic for components
+        Flywheel.periodic();
     }
 
     @Override
     public void disabledInit() {
         m_blinkin.rainbow(); //Sets blinkin to use rainbow pattern
+
+        //Stops Auto
+        AutoModeExecutor chosenAuto = autoPicker.getSelected();
+        chosenAuto.stop();
+        driveForwardAutoFeet.stop();
     }
 
     /**
@@ -237,8 +242,5 @@ public class Robot extends TimedRobot {
 
         //Prints out the string builder
         System.out.println(_sb.toString());
-
-        BallShooter.reportStatistics();
-
     }
 }
