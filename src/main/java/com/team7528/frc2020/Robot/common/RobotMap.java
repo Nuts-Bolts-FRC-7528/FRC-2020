@@ -44,7 +44,7 @@ public class RobotMap {
 
     //Intake
     public static DoubleSolenoid intake = new DoubleSolenoid(1,2);
-    public static VictorSPX intakeMotor = new VictorSPX(0);
+    public static TalonSRX intakeMotor = new TalonSRX(0);
     public static DigitalInput ballCounter = new DigitalInput(0);
 
     //LEDs
