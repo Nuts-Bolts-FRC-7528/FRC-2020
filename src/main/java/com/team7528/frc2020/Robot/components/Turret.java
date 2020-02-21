@@ -12,22 +12,10 @@ import static com.team7528.frc2020.Robot.common.RobotMap.turretRotator;
 
 public class Turret { // a class meant for the turret rotation
 
-    private static StringBuilder stats = new StringBuilder();
-    private static double currentRPM;
-    private static int loopCount;
-    private static double desiredRPM;
-    private static double kP;
-    private static double seek_adjust;
     private boolean seek_r;
     private boolean seek_l;
     private boolean disengage;
-
-    public void init() {
-        loopCount = 0; // Resets the loopCount
-        desiredRPM = 60; // Sets the desired RPM
-        kP = .50;
-
-    }
+    private double seek_adjust;
 
     /**
      * This code will be used to set up how much power will be use to spin and what buttons will be used to operate turret
@@ -35,60 +23,39 @@ public class Turret { // a class meant for the turret rotation
 
     public void periodic() {
 
-        currentRPM = turretRotator.getSelectedSensorPosition();
-        double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
-        double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
+        double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0); //
+        double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0); //
+        double kP = .50; // Value for kP variable
 
-        // Setting up the rotation of turret
+        // Setup for seeking right, left, and disengaging
 
-        if (currentRPM == desiredRPM) {
-            if (tv == 1) {
-                turretRotator.stopMotor();
-            } else if (tv == 0) {
-                turretRotator.configFactoryDefault();
-            }
-            loopCount++; // Increments loopCount
-            if (loopCount >= 10) {
-                Component.reportStatistics(); // Reports statistics
-                loopCount = 0; // Reset the loopCount
-            }
-
-            // Setup for seeking right, left, and disengaging
-
-            if (m_gamepad.getBButtonPressed()) { // right
-                seek_r = true;
-            }
-            if (seek_r) {
-                turretRotator.set(.90);
-            }
-
-            if (m_gamepad.getXButtonPressed()) { // left
-                seek_l = true;
-            }
-            if (seek_l) {
-                turretRotator.set(-.90);
-            }
-
-            if ((seek_r || seek_l) && tv == 1) {
-                seek_adjust = kP * tx;
-            }
-
-            if (m_gamepad.getAButtonPressed()) { // disengage
-                disengage = true;
-                seek_r = false;
-                seek_l = false;
-            }
-            if (disengage) {
-                turretRotator.stopMotor();
-            }
+        if (m_gamepad.getBButtonPressed()) { // right
+            seek_r = true;
         }
-    }
+        if (seek_r) {
+            turretRotator.set(.20);
+        }
 
-    // printing out statistics
+        if (m_gamepad.getXButtonPressed()) { // left
+            seek_l = true;
+        }
+        if (seek_l) {
+            turretRotator.set(-.20);
+        }
 
-    public static void reportStatistics() {
-        stats.append("Current turret RPM: ").append(currentRPM);
-        System.out.println();
-        stats.setLength(0);
+        if ((seek_r || seek_l) && tv == 1) {
+            turretRotator.set(seek_adjust);
+            seek_adjust = kP * tx;
+        }
+
+        if (m_gamepad.getAButtonPressed()) { // disengage
+            disengage = true;
+            seek_r = false;
+            seek_l = false;
+        }
+
+        if (disengage) {
+            turretRotator.stopMotor();
+        }
     }
 }
