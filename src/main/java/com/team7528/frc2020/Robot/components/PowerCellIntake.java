@@ -29,8 +29,7 @@ public class PowerCellIntake {
     private static double errorSum; // The sum of the errors
     private static double speed; // The speed to set for the flywheel motor
 
-    public static int ballAmount = 0;
-    private static int powerCellCount = 0;
+    public static int powerCellCount = 0;
     /**
      * This is the general code for the ball intake, eject, and raising/lowering the piston
      */

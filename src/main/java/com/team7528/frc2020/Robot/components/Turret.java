@@ -34,6 +34,7 @@ public class Turret { // a class meant for the turret rotation
         }
         if (seek_r) {
             turretRotator.set(.20);
+            
         }
 
         if (m_gamepad.getXButtonPressed()) { // left
@@ -41,11 +42,6 @@ public class Turret { // a class meant for the turret rotation
         }
         if (seek_l) {
             turretRotator.set(-.20);
-        }
-
-        if ((seek_r || seek_l) && tv == 1) {
-            turretRotator.set(seek_adjust);
-            seek_adjust = kP * tx;
         }
 
         if (m_gamepad.getAButtonPressed()) { // disengage
@@ -56,6 +52,11 @@ public class Turret { // a class meant for the turret rotation
 
         if (disengage) {
             turretRotator.stopMotor();
+        }
+
+        if ((seek_r || seek_l) && tv == 1) {
+            turretRotator.set(seek_adjust);
+            seek_adjust = kP * tx;
         }
     }
 }

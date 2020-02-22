@@ -36,6 +36,9 @@ public class Flywheel {
     private static int loopCount; // Helps us print statistics 5 times per second
     private static NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("limelight"); // The limelight NetworkTable, used to set a2
     private static StringBuilder stats = new StringBuilder(); // StringBuilder for statistics
+    private static double encoderVelocity; // the velocity of the flywheel
+    private static double dips; // the amount the rpm dips
+    public static int ballAmount; // The amount of balls in the flywheel
 
     /**
      * Resets the iteration counter (loopCount)
@@ -55,6 +58,9 @@ public class Flywheel {
         PID();
         shooting();
         reportStatistics();
+
+        if (m_gamepad.getStartButtonPressed() && encoderVelocity <= dips) { // If the shoot button is pressed and the encoder velocity is at a specific dip
+        }
     }
 
     /**
