@@ -25,10 +25,8 @@ public class PowerCellIntake {
     private static double currentVelocity; // current velocity
     public static double d; // The distance to the target
     private static double desiredVelocity; // The name states its purpose, READ!
-    private static double error; // The difference between desiredRPM & currentRPM
     private static double errorRate; // The rate of change for the error
     private static double errorSum; // The sum of the errors
-    private static double previousError; // The previous iteration's error
     private static double speed; // The speed to set for the flywheel motor
 
     public static int ballAmount = 0;
