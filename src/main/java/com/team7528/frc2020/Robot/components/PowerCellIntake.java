@@ -28,6 +28,7 @@ public class PowerCellIntake {
     private static double errorRate; // The rate of change for the error
     private static double errorSum; // The sum of the errors
     private static double speed; // The speed to set for the flywheel motor
+    private static boolean isReadingBall = false;
 
     public static int powerCellCount = 0;
     /**
@@ -42,15 +43,28 @@ public class PowerCellIntake {
             //intake.set(DoubleSolenoid.Value.kReverse); //drops piston
             intakeMotor.set(ControlMode.PercentOutput,-1); //moves wheels to intake balls
 
+            if(!ballCounter.get() && !isReadingBall) { //If ball sensor is reading ball being intaked
+                powerCellCount++; //Increase power cell count by one
+                isReadingBall = true; //Prevent reading multiple power cells at once
+            }
         }
         if(m_gamepad.getBumper(GenericHID.Hand.kLeft)) { //if left bumper is pressed
             //intake.set(DoubleSolenoid.Value.kReverse); //drops piston
             intakeMotor.set(ControlMode.PercentOutput, 1); //moves wheel to eject balls
+
+            if(!ballCounter.get() && !isReadingBall) { //If ball sensor is reading ball being outtaked
+                powerCellCount--; //Subtract power cell count by one
+                isReadingBall = true; //Prevent reading multiple power cells at once
+            }
         }
         if(m_gamepad.getYButton()) { //if Y button is pressed
             //intake.set(DoubleSolenoid.Value.kForward); //raises piston
             intakeMotor.set(ControlMode.PercentOutput, 0); //does not move wheels
 
+        }
+        
+        if(ballCounter.get() && isReadingBall) {
+            isReadingBall = false;
         }
     }
     private static void PID() {

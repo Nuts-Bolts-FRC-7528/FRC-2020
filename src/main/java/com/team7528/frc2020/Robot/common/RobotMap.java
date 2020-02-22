@@ -19,7 +19,7 @@ public class RobotMap {
     //Drive train
     public static WPI_TalonFX m_leftAft = new WPI_TalonFX(1);
     public static WPI_TalonFX m_leftFront = new WPI_TalonFX(2);
-    public static WPI_TalonFX m_rightAft = new WPI_TalonFX(4);
+    public static WPI_TalonFX m_rightAft = new WPI_TalonFX(3);
     public static WPI_TalonFX m_rightFront = new WPI_TalonFX(4);
 
     //Creates a new variable for how the wheels of the robot will move
