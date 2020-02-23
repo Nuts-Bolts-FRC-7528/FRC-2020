@@ -1,9 +1,11 @@
 package com.team7528.frc2020.Robot;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.sensors.PigeonIMU;
 import com.team7528.frc2020.Robot.auto.AutoModeExecutor;
 import com.team7528.frc2020.Robot.auto.actions.DriveForwardActionFeet;
 import com.team7528.frc2020.Robot.auto.modes.*;
+import com.team7528.frc2020.Robot.common.RobotMap;
 import com.team7528.frc2020.Robot.components.Flywheel;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -213,6 +215,12 @@ public class Robot extends TimedRobot {
 //            printStats();
             looperCounter = 0;
         }
+        //Pigeon IMU printouts for testing
+        PigeonIMU.GeneralStatus genStatus = new PigeonIMU.GeneralStatus();
+        gyroScope.getGeneralStatus(genStatus);
+        double [] ypr = new double[3];
+        gyroScope.getYawPitchRoll(ypr);
+        System.out.println("Yaw:" + ypr[0]);
 
         // Periodic logic for components
         Flywheel.periodic();
@@ -227,6 +235,12 @@ public class Robot extends TimedRobot {
         chosenAuto.stop();
         driveForwardAutoFeet.stop();
     }
+
+
+
+    //double [] ypr = new double[3];
+    //gyroScope.getYawPitchRoll(ypr);
+    //System.out.println("Yaw:" + ypr[0]);
 
     /**
      * Prints out statistics
