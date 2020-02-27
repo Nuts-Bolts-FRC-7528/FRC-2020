@@ -14,7 +14,7 @@ import static com.team7528.frc2020.Robot.common.RobotMap.*;
 @SuppressWarnings({"FieldCanBeLocal"})
 public class Flywheel {
 
-    private static final double a1 = 42; // The angle the limelight is mounted at
+    private static final double a1 = 20; // The angle the limelight is mounted at
     private static final double h1 = 11.625 /* Non-block Height: 11.25 */ ; // The height the limelight is mounted at
     private static final double h2 = 20.25 /* Full Height: 98.25 */ ; // The height of the target
     private static final double k_distance = 0.07; // Constant for the flywheel speed
@@ -53,7 +53,7 @@ public class Flywheel {
     public static void periodic() {
         a2 = limelightTable.getEntry("ty").getDouble(0); // Sets a2, the y position of the target
         currentRPM = flywheelSpinner.getSelectedSensorVelocity() / k_gearRatio; // Gets the flywheel's current RPM
-        d = Math.round((h2-h1) * 12 / Math.tan(Math.toRadians(a1+a2))); // Finds the distance
+        d = Math.round((h2-h1) * 2.56 / Math.tan(Math.toRadians(a1+a2))); // Finds the distance
 
         PID();
         shooting();
