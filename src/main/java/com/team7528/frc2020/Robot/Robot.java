@@ -138,7 +138,7 @@ public class Robot extends TimedRobot {
         m_blinkin.init();
 
         //Transmits video through cameras
-        CameraServer.getInstance().startAutomaticCapture();
+//        CameraServer.getInstance().startAutomaticCapture();
 
         Shuffleboard.getTab("DRIVETRAIN").add("Left Encoder", -m_leftFront.getSelectedSensorPosition());
         Shuffleboard.getTab("DRIVETRAIN").add("Right Encoder", m_rightFront.getSelectedSensorPosition());
@@ -162,14 +162,8 @@ public class Robot extends TimedRobot {
 //        SmartDashboard.putNumber("Distance to target", Flywheel.d); //Display distance from limelight to power port to Shuffleboard (DEBUG)
         SmartDashboard.putNumber("Left Encoder", m_leftFront.getSelectedSensorPosition());
         SmartDashboard.putNumber("Right Encoder", m_rightFront.getSelectedSensorPosition());
-
-        totallyUseful++;
-        totallyUseful++;
-        totallyUseful++;
-        totallyUseful++;
-        totallyUseful++;
-        totallyUseful += totallyUseful;
-        totallyUseful *= totallyUseful;
+        SmartDashboard.putNumber("Turret Encoder", turretRotator.getSelectedSensorPosition());
+        SmartDashboard.putNumber("Flywheel Velocity (Master)", flywheelMaster.getSelectedSensorVelocity());
     }
 
     @Override
