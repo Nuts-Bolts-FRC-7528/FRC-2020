@@ -41,11 +41,16 @@ public class DriveForwardActionEncoder implements Action {
     public void update() {
         error = m_leftFront.getSelectedSensorVelocity() - m_rightFront.getSelectedSensorVelocity(); //gets the difference between the motor velocities
         turn_power = kP * error; //how much power to turn with
+        if (turn_power >= 0.5) {
+            turn_power = 0.5;
+        } else if (turn_power <= -0.5) {
+            turn_power = -0.5;
+        }
         m_drive.arcadeDrive(movingPower, turn_power); //driving the robot
     }
     @Override
     public void done() {
-
+        m_drive.setSafetyEnabled(true);
     }
     /**
      * Sets the startTime variable equal to current FPGA time
@@ -53,5 +58,6 @@ public class DriveForwardActionEncoder implements Action {
     @Override
     public void start() {
         startTime = Timer.getFPGATimestamp();
+        m_drive.setSafetyEnabled(false);
     }
 }

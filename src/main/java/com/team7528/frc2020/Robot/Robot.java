@@ -3,10 +3,9 @@ package com.team7528.frc2020.Robot;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.team7528.frc2020.Robot.auto.AutoModeExecutor;
-import com.team7528.frc2020.Robot.auto.actions.DriveForwardActionFeet;
 import com.team7528.frc2020.Robot.auto.modes.*;
-import com.team7528.frc2020.Robot.common.RobotMap;
 import com.team7528.frc2020.Robot.components.Flywheel;
+import com.team7528.frc2020.Robot.components.Turret;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -19,13 +18,18 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 
 import static com.team7528.frc2020.Robot.common.RobotMap.*;
+import static com.team7528.frc2020.Robot.auto.actions.DriveForwardActionGyro.ypr;
 
+@SuppressWarnings({"unused", "SpellCheckingInspection"})
 public class Robot extends TimedRobot {
 
     //Prints out stats regarding the string builder
     private StringBuilder _sb = new StringBuilder();
     private int looperCounter = 0;
     private SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy HH:mm:ss");
+
+    //Pigeon IMU stuff
+    PigeonIMU.GeneralStatus genStatus = new PigeonIMU.GeneralStatus();
 
     //Lets you pick an autonomous code
     private AutoModeExecutor doNothingAuto = new AutoModeExecutor(new DoNothingAuto());
@@ -40,11 +44,11 @@ public class Robot extends TimedRobot {
     private AutoModeExecutor rightTurnAuto = new AutoModeExecutor(new RightTurnAuto());
 
     private Double fineControlSpeedDouble;
+    private int totallyUseful;
 
     private SendableChooser<AutoModeExecutor> autoPicker = new SendableChooser<>();
     private SendableChooser<Double> fineControlSpeed = new SendableChooser<>();
     private SendableChooser<Double> deadBandOptions = new SendableChooser<>();
-
     /**
      * Initiates motor controller set up
      */
@@ -70,8 +74,11 @@ public class Robot extends TimedRobot {
         m_leftFront.setSensorPhase(true);
         m_rightFront.setSensorPhase(false);
 
+        //imuTalon.configSelectedFeedbackSensor()
+
         //Initialize Components
         Flywheel.init();
+        Turret.init();
 
         //Reset encoders to 0
         m_leftFront.setSelectedSensorPosition(0,0,10);
@@ -141,13 +148,35 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         m_blinkin.periodic(); //Set blinkin pattern during robot operation
 
+        SmartDashboard.putBoolean("m_drive safety",m_drive.isSafetyEnabled());
+
+        //Pigeon IMU printouts for testing
+
+        //gyroScope.getGeneralStatus(genStatus);
+        //gyroScope.getYawPitchRoll(ypr);
+//        System.out.println("Yaw:" + ypr[0]);
+        SmartDashboard.putNumber("Yaw",ypr[0]);
+
 //        SmartDashboard.putNumber("Left Front Encoder", -m_leftFront.getSelectedSensorPosition());
 //        SmartDashboard.putNumber("Right Front Encoder", m_rightFront.getSelectedSensorPosition());
-        SmartDashboard.putNumber("Distance to target", Flywheel.d); //Display distance from limelight to power port to Shuffleboard (DEBUG)
+//        SmartDashboard.putNumber("Distance to target", Flywheel.d); //Display distance from limelight to power port to Shuffleboard (DEBUG)
+        SmartDashboard.putNumber("Left Encoder", m_leftFront.getSelectedSensorPosition());
+        SmartDashboard.putNumber("Right Encoder", m_rightFront.getSelectedSensorPosition());
+
+        totallyUseful++;
+        totallyUseful++;
+        totallyUseful++;
+        totallyUseful++;
+        totallyUseful++;
+        totallyUseful += totallyUseful;
+        totallyUseful *= totallyUseful;
     }
 
     @Override
     public void autonomousInit() {
+
+        m_drive.setSafetyEnabled(false);
+
         //Reset encoders to 0
         m_leftFront.setSelectedSensorPosition(0,0,10);
         m_rightFront.setSelectedSensorPosition(0,0,10);
@@ -168,6 +197,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousPeriodic() {
+
         //Prints Stats during auto
         //looperCounter++;
         /*f (looperCounter >= 10) {
@@ -186,6 +216,7 @@ public class Robot extends TimedRobot {
         AutoModeExecutor chosenAuto = autoPicker.getSelected();
         chosenAuto.stop();
         fineControlSpeedDouble = fineControlSpeed.getSelected();
+        m_drive.setSafetyEnabled(true);
     }
 
     /**
@@ -215,17 +246,11 @@ public class Robot extends TimedRobot {
 //            printStats();
             looperCounter = 0;
         }
-        //Pigeon IMU printouts for testing
-        PigeonIMU.GeneralStatus genStatus = new PigeonIMU.GeneralStatus();
-        gyroScope.getGeneralStatus(genStatus);
-        double [] ypr = new double[3];
-        gyroScope.getYawPitchRoll(ypr);
-        System.out.println("Yaw:" + ypr[0]);
 
         // Periodic logic for components
         Flywheel.periodic();
+        Turret.periodic();
     }
-
     @Override
     public void disabledInit() {
         m_blinkin.rainbow(); //Sets blinkin to use rainbow pattern
@@ -234,11 +259,12 @@ public class Robot extends TimedRobot {
         AutoModeExecutor chosenAuto = autoPicker.getSelected();
         chosenAuto.stop();
         driveForwardAutoFeet.stop();
+
+        System.out.println(totallyUseful);
     }
 
 
 
-    //double [] ypr = new double[3];
     //gyroScope.getYawPitchRoll(ypr);
     //System.out.println("Yaw:" + ypr[0]);
 

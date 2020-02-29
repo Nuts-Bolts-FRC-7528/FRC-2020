@@ -27,7 +27,7 @@ public class RobotMap {
 
     // Control Panel
     public static WPI_TalonSRX controlPanelWheel = new WPI_TalonSRX(0);
-    public static DoubleSolenoid m_wheelEjector = new DoubleSolenoid(2,3);
+//    public static DoubleSolenoid m_wheelEjector = new DoubleSolenoid(2,3);
     public static ColorSensorV3 colors = new ColorSensorV3(I2C.Port.kOnboard);
 
     //PowerCell Shooter
@@ -35,15 +35,17 @@ public class RobotMap {
     public static WPI_TalonSRX flywheelSpinner = new WPI_TalonSRX(2);
     public static WPI_TalonSRX ballConveyor = new WPI_TalonSRX(3);
 
+    public static TalonSRX imuTalon = new TalonSRX(50);
+
     //Operator interface
     public static Joystick m_joy = new Joystick(0); //For chassis driver
     public static XboxController m_gamepad = new XboxController(1); //For manipulator
 
     //Gyroscope
-    public static PigeonIMU gyroScope = new PigeonIMU(0);
+    public static PigeonIMU gyroScope = new PigeonIMU(50);
 
     //Intake
-    public static DoubleSolenoid intake = new DoubleSolenoid(1,2);
+//    public static DoubleSolenoid intake = new DoubleSolenoid(1,2);
     public static TalonSRX intakeMotor = new TalonSRX(0);
     public static DigitalInput ballCounter = new DigitalInput(0);
 

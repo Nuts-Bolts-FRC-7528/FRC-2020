@@ -13,7 +13,7 @@ public class DriveForwardActionGyro implements Action {
     private double movingPower; // Power of motors
     private double startTime; // FPGA timestamp at the start of the WaitAction
     private double turn_power;
-    public static double[] ypr; // Public double array for actions including the Gyro
+    public static double[] ypr = new double[] {0.0, 0.0, 0.0}; // Public double array for actions including the Gyro
     private int movingSeconds; // Time for moving
 
     /**
@@ -57,6 +57,5 @@ public class DriveForwardActionGyro implements Action {
     @Override
     public void start() {
         startTime = Timer.getFPGATimestamp();
-        ypr = new double[]{0.0, 0.0, 0.0};
     }
 }

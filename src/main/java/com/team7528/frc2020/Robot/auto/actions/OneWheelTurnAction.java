@@ -39,7 +39,6 @@ public class OneWheelTurnAction implements Action {
 
     @Override
     public void start() {
-        ypr = new double[]{0.0, 0.0, 0.0};
         startingAngle = gyroScope.getYawPitchRoll(ypr).value;
     }
 }

@@ -22,9 +22,9 @@ public class IntakeAction implements Action {
 
     @Override
     public void start() {/*
-        //DoubleSolenoid.Value.kForward
-        //DoubleSolenoid.Value.kReverse
-        /*if(intake.get()==DoubleSolenoid.Value.kForward) {
+        DoubleSolenoid.Value.kForward
+        DoubleSolenoid.Value.kReverse
+        if(intake.get()==DoubleSolenoid.Value.kForward) {
 
         }
         if(intake.get()==DoubleSolenoid.Value.kReverse){
