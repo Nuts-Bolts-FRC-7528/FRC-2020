@@ -1,8 +1,10 @@
 package com.team7528.frc2020.Robot.components;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.GenericHID;
 
 import static com.team7528.frc2020.Robot.common.RobotMap.*;
 
@@ -45,6 +47,12 @@ public class Flywheel {
      */
     public static void init() {
         loopCount = 0; // Resets the iteration counter (loopCount)
+        flywheelSlave.follow(flywheelMaster);
+        flywheelMaster.configFactoryDefault();
+        flywheelSlave.configFactoryDefault();
+        flywheelSlave.setInverted(true);
+        flywheelMaster.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+        flywheelMaster.setSelectedSensorPosition(0,0,10);
     }
 
     /**
@@ -52,7 +60,7 @@ public class Flywheel {
      */
     public static void periodic() {
         a2 = limelightTable.getEntry("ty").getDouble(0); // Sets a2, the y position of the target
-        currentRPM = flywheelSpinner.getSelectedSensorVelocity() / k_gearRatio; // Gets the flywheel's current RPM
+        currentRPM = flywheelMaster.getSelectedSensorVelocity() / k_gearRatio; // Gets the flywheel's current RPM
         d = Math.round((h2-h1) * 2.56 / Math.tan(Math.toRadians(a1+a2))); // Finds the distance
 
         PID();
@@ -61,6 +69,7 @@ public class Flywheel {
 
         if (m_gamepad.getStartButtonPressed() && encoderVelocity <= dips) { // If the shoot button is pressed and the encoder velocity is at a specific dip
         }
+        flywheelMaster.set(ControlMode.PercentOutput, m_gamepad.getY(GenericHID.Hand.kRight));
     }
 
     /**
@@ -71,7 +80,7 @@ public class Flywheel {
             if (Math.abs(desiredRPM - currentRPM) <= k_flywheelTolerance) { // ... and we're close enough to the desired RPM ...
                 shoot(); // ... then shoot
             } else { // If we aren't at the desired RPM ...
-                flywheelSpinner.set(ControlMode.Velocity, speed); // ... set the motor speed to the desired RPM
+                flywheelMaster.set(ControlMode.Velocity, speed); // ... set the motor speed to the desired RPM
             }
         }
     }
