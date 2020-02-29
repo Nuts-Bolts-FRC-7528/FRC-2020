@@ -1,7 +1,9 @@
 package com.team7528.frc2020.Robot.components;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.GenericHID;
 
 import static com.team7528.frc2020.Robot.common.RobotMap.*;
 
@@ -15,7 +17,7 @@ public class Turret { // a class meant for the turret rotation
 
     private static boolean seek_r;
     private static boolean seek_l;
-    private static boolean disengage;
+    private static boolean disengage = true;
     private static double seek_adjust;
 
     /**
@@ -35,14 +37,14 @@ public class Turret { // a class meant for the turret rotation
             seek_r = true;
         }
         if (seek_r) {
-            turretRotator.set(.20);
+            turretRotator.set(.50);
         }
 
         if (m_gamepad.getXButtonPressed()) { // left
             seek_l = true;
         }
         if (seek_l) {
-            turretRotator.set(-.20);
+            turretRotator.set(-.50);
         }
 
         if (m_gamepad.getAButtonPressed()) { // disengage
@@ -52,7 +54,7 @@ public class Turret { // a class meant for the turret rotation
         }
 
         if (disengage) {
-            turretRotator.stopMotor();
+            turretRotator.set(ControlMode.PercentOutput,m_gamepad.getX(GenericHID.Hand.kRight));
         }
 
         if ((seek_r || seek_l) && tv == 1) {

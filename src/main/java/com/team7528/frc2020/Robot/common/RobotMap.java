@@ -31,10 +31,10 @@ public class RobotMap {
     public static ColorSensorV3 colors = new ColorSensorV3(I2C.Port.kOnboard);
 
     //PowerCell Shooter
-    public static WPI_TalonSRX turretRotator = new WPI_TalonSRX(1);
-    public static WPI_TalonFX flywheelMaster = new WPI_TalonFX(2);
+    public static WPI_TalonFX flywheelMaster = new WPI_TalonFX(18);
     public static WPI_TalonSRX ballConveyor = new WPI_TalonSRX(3);
-    public static WPI_TalonFX flywheelSlave = new WPI_TalonFX(4);
+    public static WPI_TalonSRX turretRotator = new WPI_TalonSRX(20);
+    public static WPI_TalonFX flywheelSlave = new WPI_TalonFX(19);
 
     public static TalonSRX imuTalon = new TalonSRX(50);
 
