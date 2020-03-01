@@ -5,12 +5,12 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
 import static com.team7528.frc2020.Robot.common.RobotMap.*;
 
-@SuppressWarnings("FieldCanBeLocal")
+@SuppressWarnings({"FieldCanBeLocal", "SpellCheckingInspection"})
 public class DriveForwardActionFeet implements Action {
 
     private double degreesToMove; // How many ticks to move
     private final double degreesToInches = 1.0 / 360 * 1.0 / 4.0 * 6;
-    // Annotation for degrees to inches: 1 rotation / 360 degrees * gear ratio * wheel size
+    // degrees to inches = 1 rotation / 360 encoder ticks * gear ratio * wheel diameter
 
     private final double kP = 0.00003; // P constant
     private final double kI = 0.0; // I constant

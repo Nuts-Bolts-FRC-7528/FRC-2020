@@ -4,15 +4,18 @@ import edu.wpi.first.wpilibj.Timer;
 
 import static com.team7528.frc2020.Robot.common.RobotMap.*;
 
-@SuppressWarnings("FieldCanBeLocal")
+@SuppressWarnings({"FieldCanBeLocal", "SpellCheckingInspection"})
 public class DriveForwardActionEncoder implements Action {
+
     //Instantiating variables
     private final double kP = 0.07; // P constant
     private double error;
     private double movingPower; // Power of motors
     private double startTime; // FPGA timestamp at the start of the WaitAction
     private double turn_power;
+
     private int movingSeconds; // Time for moving
+
     /**
      * Constructor for DriveForwardActionEncoder
      *
@@ -23,6 +26,7 @@ public class DriveForwardActionEncoder implements Action {
         movingPower = power;
         movingSeconds = seconds;
     }
+
     /**
      * Returns if the desired amount of seconds has passed
      * 
@@ -33,6 +37,7 @@ public class DriveForwardActionEncoder implements Action {
         return (Timer.getFPGATimestamp() - startTime >= movingSeconds);
         // (current timestamp) - (starting time for action) is greater than or equal to (time to move)
     }
+
     /**
      * Adjusts to correct the velocity
      *
@@ -48,10 +53,12 @@ public class DriveForwardActionEncoder implements Action {
         }
         m_drive.arcadeDrive(movingPower, turn_power); //driving the robot
     }
+
     @Override
     public void done() {
         m_drive.setSafetyEnabled(true);
     }
+
     /**
      * Sets the startTime variable equal to current FPGA time
      */
