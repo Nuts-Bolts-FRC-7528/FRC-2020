@@ -1,5 +1,6 @@
 package com.team7528.frc2020.Robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.team7528.frc2020.Robot.auto.AutoModeExecutor;
@@ -7,6 +8,7 @@ import com.team7528.frc2020.Robot.auto.modes.*;
 import com.team7528.frc2020.Robot.components.Flywheel;
 import com.team7528.frc2020.Robot.components.Turret;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -243,7 +245,12 @@ public class Robot extends TimedRobot {
 
         // Periodic logic for components
         Flywheel.periodic();
-        Turret.periodic();
+//        System.out.println("debug from robot class");
+//        Turret.periodic();
+
+        flywheelMaster.set(ControlMode.PercentOutput, m_gamepad.getY(GenericHID.Hand.kRight));
+        turretRotator.set(ControlMode.PercentOutput, m_gamepad.getY(GenericHID.Hand.kLeft) / 2);
+
     }
     @Override
     public void disabledInit() {

@@ -32,29 +32,35 @@ public class Turret { // a class meant for the turret rotation
         double kP = .50; // Value for kP variable
 
         // Setup for seeking right, left, and disengaging
+        //Changed to use R Bumper instead of X - Grace
 
-        if (m_gamepad.getBButtonPressed()) { // right
+        //turretRotator.set(ControlMode.PercentOutput, m_gamepad.getY(GenericHID.Hand.kLeft));
+
+        if (m_gamepad.getBumperPressed(GenericHID.Hand.kRight)) {
             seek_r = true;
-        }
-        if (seek_r) {
-            turretRotator.set(.50);
+            seek_l = false;
         }
 
-        if (m_gamepad.getXButtonPressed()) { // left
+        if (seek_r) {
+            turretRotator.set(ControlMode.PercentOutput, m_gamepad.getY(GenericHID.Hand.kLeft));
+        }
+
+        if (m_gamepad.getBumperPressed(GenericHID.Hand.kLeft)) { // left
             seek_l = true;
+            seek_r = false;
         }
         if (seek_l) {
-            turretRotator.set(-.50);
+            turretRotator.set(ControlMode.PercentOutput, m_gamepad.getX(GenericHID.Hand.kLeft));
         }
 
-        if (m_gamepad.getAButtonPressed()) { // disengage
+        if (m_gamepad.getBackButtonPressed()) { // disengage
             disengage = true;
             seek_r = false;
             seek_l = false;
         }
 
         if (disengage) {
-            turretRotator.set(ControlMode.PercentOutput,m_gamepad.getX(GenericHID.Hand.kRight));
+            turretRotator.set(ControlMode.PercentOutput,0);
         }
 
         if ((seek_r || seek_l) && tv == 1) {
@@ -65,14 +71,12 @@ public class Turret { // a class meant for the turret rotation
         if (sensorPosition <= -5000) {
             turretRotator.set(0);
         }
-
         if (sensorPosition <= 5000) {
             turretRotator.set(0);
         }
     }
 
     public static void init() {
-
         turretRotator.configFactoryDefault();
         turretRotator.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
         turretRotator.setSelectedSensorPosition(0,0,10);
