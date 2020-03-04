@@ -21,6 +21,7 @@ import java.time.Instant;
 
 import static com.team7528.frc2020.Robot.common.RobotMap.*;
 import static com.team7528.frc2020.Robot.auto.actions.DriveForwardActionGyro.ypr;
+import static com.team7528.frc2020.Robot.components.Flywheel.d;
 
 @SuppressWarnings({"unused", "SpellCheckingInspection"})
 public class Robot extends TimedRobot {
@@ -151,6 +152,7 @@ public class Robot extends TimedRobot {
         m_blinkin.periodic(); //Set blinkin pattern during robot operation
 
         SmartDashboard.putBoolean("m_drive safety",m_drive.isSafetyEnabled());
+        SmartDashboard.putNumber("distance", d);
 
         //Pigeon IMU printouts for testing
 
@@ -248,8 +250,8 @@ public class Robot extends TimedRobot {
 //        System.out.println("debug from robot class");
 //        Turret.periodic();
 
-        flywheelMaster.set(ControlMode.PercentOutput, m_gamepad.getY(GenericHID.Hand.kRight));
-        turretRotator.set(ControlMode.PercentOutput, m_gamepad.getY(GenericHID.Hand.kLeft) / 2);
+//        flywheelMaster.set(ControlMode.PercentOutput, m_gamepad.getY(GenericHID.Hand.kRight));
+//        turretRotator.set(ControlMode.PercentOutput, m_gamepad.getY(GenericHID.Hand.kLeft) / 2);
 
     }
     @Override

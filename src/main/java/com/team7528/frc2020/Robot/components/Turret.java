@@ -42,7 +42,7 @@ public class Turret { // a class meant for the turret rotation
         }
 
         if (seek_r) {
-            turretRotator.set(ControlMode.PercentOutput, m_gamepad.getY(GenericHID.Hand.kLeft));
+            turretRotator.set(ControlMode.PercentOutput, m_gamepad.getX(GenericHID.Hand.kLeft));
         }
 
         if (m_gamepad.getBumperPressed(GenericHID.Hand.kLeft)) { // left
