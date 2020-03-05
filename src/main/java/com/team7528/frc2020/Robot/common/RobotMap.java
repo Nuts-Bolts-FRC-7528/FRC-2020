@@ -42,12 +42,17 @@ public class RobotMap {
     public static Joystick m_joy = new Joystick(0); //For chassis driver
     public static XboxController m_gamepad = new XboxController(1); //For manipulator
 
+    // Climbing
+    public static TalonSRX winchMaster = new TalonSRX(1); // Motor type variable
+    public static TalonSRX winchSlave = new TalonSRX(2);
+    public static DoubleSolenoid climberElevatorPiston = new DoubleSolenoid(3,4);
+
     //Gyroscope
     public static PigeonIMU gyroScope = new PigeonIMU(50);
 
     //Intake
 //    public static DoubleSolenoid intake = new DoubleSolenoid(1,2);
-    public static TalonSRX intakeMotor = new TalonSRX(0);
+    public static TalonSRX intakeMotor = new TalonSRX(2);
     public static DigitalInput ballCounter = new DigitalInput(0);
 
     //LEDs

@@ -1,14 +1,12 @@
 package com.team7528.frc2020.Robot;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.team7528.frc2020.Robot.auto.AutoModeExecutor;
 import com.team7528.frc2020.Robot.auto.modes.*;
+import com.team7528.frc2020.Robot.components.Climber;
 import com.team7528.frc2020.Robot.components.Flywheel;
 import com.team7528.frc2020.Robot.components.Turret;
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -19,8 +17,8 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 
-import static com.team7528.frc2020.Robot.common.RobotMap.*;
 import static com.team7528.frc2020.Robot.auto.actions.DriveForwardActionGyro.ypr;
+import static com.team7528.frc2020.Robot.common.RobotMap.*;
 import static com.team7528.frc2020.Robot.components.Flywheel.d;
 
 @SuppressWarnings({"unused", "SpellCheckingInspection"})
@@ -47,15 +45,14 @@ public class Robot extends TimedRobot {
     private AutoModeExecutor rightTurnAuto = new AutoModeExecutor(new RightTurnAuto());
 
     private Double fineControlSpeedDouble;
-    private int totallyUseful;
 
     private SendableChooser<AutoModeExecutor> autoPicker = new SendableChooser<>();
     private SendableChooser<Double> fineControlSpeed = new SendableChooser<>();
     private SendableChooser<Double> deadBandOptions = new SendableChooser<>();
+
     /**
      * Initiates motor controller set up
      */
-
     @Override
     public void robotInit() {
 
@@ -82,6 +79,7 @@ public class Robot extends TimedRobot {
         //Initialize Components
         Flywheel.init();
         Turret.init();
+        Climber.init();
 
         //Reset encoders to 0
         m_leftFront.setSelectedSensorPosition(0,0,10);
@@ -207,7 +205,6 @@ public class Robot extends TimedRobot {
     /**
      * Stops auto
      */
-
     @Override
     public void teleopInit() {
         //Stops Auto
@@ -247,13 +244,15 @@ public class Robot extends TimedRobot {
 
         // Periodic logic for components
         Flywheel.periodic();
+        Climber.periodic();
+        Turret.periodic();
 //        System.out.println("debug from robot class");
-//        Turret.periodic();
 
 //        flywheelMaster.set(ControlMode.PercentOutput, m_gamepad.getY(GenericHID.Hand.kRight));
 //        turretRotator.set(ControlMode.PercentOutput, m_gamepad.getY(GenericHID.Hand.kLeft) / 2);
 
     }
+
     @Override
     public void disabledInit() {
         m_blinkin.rainbow(); //Sets blinkin to use rainbow pattern
@@ -262,11 +261,7 @@ public class Robot extends TimedRobot {
         AutoModeExecutor chosenAuto = autoPicker.getSelected();
         chosenAuto.stop();
         driveForwardAutoFeet.stop();
-
-        System.out.println(totallyUseful);
     }
-
-
 
     //gyroScope.getYawPitchRoll(ypr);
     //System.out.println("Yaw:" + ypr[0]);
