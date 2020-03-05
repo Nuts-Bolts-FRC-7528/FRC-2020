@@ -21,15 +21,15 @@ public class Flywheel {
     private static final double a1 = 37.5; // The angle the limelight is mounted at
     private static final double h1 = 30 /* Non-block Height: 11.25 */ ; // The height the limelight is mounted at
     private static final double h2 = 98.25; // The height of the target
-    private static final double k_distance = 0.07; // Constant for the flywheel speed
+    private static final double k_distance = 20000/112.0; // Constant for the flywheel speed
     private static final double k_flywheelTolerance = 100; // The flywheel tolerance
     private static final double k_gearRatio = 1 / 4.0; // The gear ratio for the flywheel
-    private static final double kP = 0.036; // P constant for PID loop
+    private static final double kP = 0.0001; // P constant for PID loop
     //Ku = 0.1, 0.06
     //Tu = 0.3
-    private static final double kI = 0.24/*0.0837*/; // I constant for PID loop
-    private static final double kD = 0.00135/*0.0012659625*/; // D constant for PID loop
-    private static final double kF = /*1.0/2*/0000;
+    private static final double kI = 0.007/*2*/; // I constant for PID loop
+    private static final double kD = 0.0/*0.0012659625*/; // D constant for PID loop
+    private static final double kF = 0.005;
     private static double a2; // The angle from the limelight
     private static double currentRPM; // The flywheel's current RPM
     public static double d; // The distance to the target
@@ -41,7 +41,6 @@ public class Flywheel {
     private static double speed; // The speed to set for the flywheel motor
     private static int loopCount; // Helps us print statistics 5 times per second
     private static int shootingLoop, shootingLoopTwo;
-    private static NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("limelight"); // The limelight NetworkTable, used to set a2
     private static StringBuilder stats = new StringBuilder(); // StringBuilder for statistics
     private static double encoderVelocity; // the velocity of the flywheel
     private static double dips; // the amount the rpm dips
@@ -58,9 +57,10 @@ public class Flywheel {
         flywheelSlave.setInverted(true);
         flywheelMaster.setNeutralMode(NeutralMode.Brake);
         flywheelSlave.setNeutralMode(NeutralMode.Brake);
+//        flywheelMaster.setSensorPhase(true);
         flywheelMaster.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
         flywheelMaster.setSelectedSensorPosition(0,0,10);
-        flywheelMaster.configOpenloopRamp(0.5,10);
+//        flywheelMaster.configOpenloopRamp(0.5,10);
     }
 
     /**
@@ -70,6 +70,10 @@ public class Flywheel {
         a2 = limelightTable.getEntry("ty").getDouble(0); // Sets a2, the y position of the target
         currentRPM = flywheelMaster.getSelectedSensorVelocity() / k_gearRatio; // Gets the flywheel's current RPM
         d = Math.round((h2-h1) /* 2.56*/ / Math.tan(Math.toRadians(a1+a2))); // Finds the distance
+
+        if(m_gamepad.getStartButtonReleased()) {
+            errorSum = 0;
+        }
 
         shooting();
         reportStatistics();
@@ -82,14 +86,18 @@ public class Flywheel {
      */
     private static void shooting() {
         if (m_gamepad.getStartButton()) { // If the start button is pressed ...
-            if (Math.abs(desiredRPM - currentRPM) <= k_flywheelTolerance) { // ... and we're close enough to the desired RPM ...
+            if (Math.abs(desiredRPM - -flywheelMaster.getSelectedSensorVelocity()) <= k_flywheelTolerance) { // ... and we're close enough to the desired RPM ...
+                SmartDashboard.putBoolean("AUTO SHOOT READY", true);
                 shoot(); // ... then shoot
+            } else {
+                SmartDashboard.putBoolean("AUTO SHOOT READY", false);
             }
             PID();
-            flywheelMaster.set(ControlMode.PercentOutput, speed); // ... set the motor speed to the desired RPM
+            flywheelMaster.set(ControlMode.PercentOutput, -speed); // ... set the motor speed to the desired RPM
             shootingLoop++;
         } else {
-            flywheelMaster.set(ControlMode.PercentOutput, 0);
+            flywheelMaster.set(ControlMode.PercentOutput, m_gamepad.getY(GenericHID.Hand.kLeft));
+            SmartDashboard.putBoolean("AUTO SHOOT READY", false);
         }
         shootingLoopTwo++;
     }
@@ -98,17 +106,22 @@ public class Flywheel {
      * PID loop method
      */
     private static void PID() {
-        error = (desiredRPM - currentRPM);
-        errorSum += error * 0.02; // Add the error to the error sum
-        if (errorSum >= 1) { // If the error sum gets too high ...
-            errorSum = 1; // ... set it to the maximum
-        } else if (errorSum <= -1) {
-            errorSum = -1;
+        error = (desiredRPM - -flywheelMaster.getSelectedSensorVelocity());
+        if(Math.abs(error) <= 1000) {
+//        if (errorSum >= 100) { // If the error sum gets too high ...
+//            errorSum = 100; // ... set it to the maximum
+//        } else if (errorSum <= -100) {
+//            errorSum = -100;
+//        }
+            errorSum += error * 0.02; // Add the error to the error sum
         }
         errorRate = (error - previousError) / 0.02;
         speed = (kF * desiredRPM + kP * error + kI * errorSum + kD * errorRate) / 100.0;
-//        desiredRPM = speed * d * k_distance / k_gearRatio; // Sets the desired RPM
-        desiredRPM = 10000; // Sets the desired RPM
+        if(speed < 0) {
+            speed = 0;
+        }
+//        desiredRPM = k_distance*d; // Sets the desired RPM
+        desiredRPM = 20000; // Sets the desired RPM
         previousError = error;
     }
 
@@ -128,6 +141,8 @@ public class Flywheel {
         SmartDashboard.putNumber("Iterations with shooting() used", shootingLoop);
         SmartDashboard.putNumber("Speed value", speed);
         SmartDashboard.putNumber("Desired RPM", desiredRPM);
+        SmartDashboard.putNumber("Error", error);
+        SmartDashboard.putNumber("ErrorSum", errorSum);
     }
 
     /**

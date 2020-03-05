@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import static com.team7528.frc2020.Robot.common.RobotMap.*;
 
@@ -30,6 +31,8 @@ public class Turret { // a class meant for the turret rotation
         double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0); //
         double sensorPosition = turretRotator.getSelectedSensorPosition();
         double kP = .50; // Value for kP variable
+        SmartDashboard.putBoolean("seek_l",seek_l);
+        SmartDashboard.putBoolean("seek_r",seek_r);
 
         // Setup for seeking right, left, and disengaging
         //Changed to use R Bumper instead of X - Grace

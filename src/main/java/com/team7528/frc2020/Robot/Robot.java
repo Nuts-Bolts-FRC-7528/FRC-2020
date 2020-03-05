@@ -167,7 +167,15 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Left Encoder", m_leftFront.getSelectedSensorPosition());
         SmartDashboard.putNumber("Right Encoder", m_rightFront.getSelectedSensorPosition());
         SmartDashboard.putNumber("Turret Encoder", turretRotator.getSelectedSensorPosition());
-        SmartDashboard.putNumber("Flywheel Velocity (Master)", flywheelMaster.getSelectedSensorVelocity());
+        SmartDashboard.putNumber("Flywheel Velocity (Master)", -flywheelMaster.getSelectedSensorVelocity());
+
+        if(m_gamepad.getStickButtonPressed(GenericHID.Hand.kRight)) {
+            limelightTable.getEntry("ledMode").setNumber(0);
+        }
+
+        if(m_gamepad.getStickButtonPressed(GenericHID.Hand.kLeft)) {
+            limelightTable.getEntry("ledMode").setNumber(1);
+        }
     }
 
     @Override
