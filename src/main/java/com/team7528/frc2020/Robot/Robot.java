@@ -6,6 +6,7 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 import com.team7528.frc2020.Robot.auto.AutoModeExecutor;
 import com.team7528.frc2020.Robot.auto.modes.*;
 import com.team7528.frc2020.Robot.components.Flywheel;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -137,7 +138,7 @@ public class Robot extends TimedRobot {
         m_blinkin.init();
 
         //Transmits video through cameras
-//        CameraServer.getInstance().startAutomaticCapture();
+        CameraServer.getInstance().startAutomaticCapture();
 
         Shuffleboard.getTab("DRIVETRAIN").add("Left Encoder", -m_leftFront.getSelectedSensorPosition());
         Shuffleboard.getTab("DRIVETRAIN").add("Right Encoder", m_rightFront.getSelectedSensorPosition());
