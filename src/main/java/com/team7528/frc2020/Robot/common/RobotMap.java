@@ -7,6 +7,8 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.revrobotics.ColorSensorV3;
 import com.team7528.lib.Blinkin;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
@@ -57,4 +59,7 @@ public class RobotMap {
 
     //LEDs
     public static Blinkin m_blinkin = new Blinkin(0);
+
+    //Vision
+    public static NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("limelight"); // The limelight NetworkTable, used to set a2
 }

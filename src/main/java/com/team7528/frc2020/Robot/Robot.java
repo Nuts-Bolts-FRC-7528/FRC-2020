@@ -1,5 +1,6 @@
 package com.team7528.frc2020.Robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.team7528.frc2020.Robot.auto.AutoModeExecutor;
@@ -7,6 +8,7 @@ import com.team7528.frc2020.Robot.auto.modes.*;
 import com.team7528.frc2020.Robot.components.Climber;
 import com.team7528.frc2020.Robot.components.Flywheel;
 import com.team7528.frc2020.Robot.components.Turret;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -165,7 +167,14 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Left Encoder", m_leftFront.getSelectedSensorPosition());
         SmartDashboard.putNumber("Right Encoder", m_rightFront.getSelectedSensorPosition());
         SmartDashboard.putNumber("Turret Encoder", turretRotator.getSelectedSensorPosition());
-        SmartDashboard.putNumber("Flywheel Velocity (Master)", flywheelMaster.getSelectedSensorVelocity());
+
+        if(m_gamepad.getStickButtonPressed(GenericHID.Hand.kRight)) {
+            limelightTable.getEntry("ledMode").setNumber(0);
+        }
+
+        if(m_gamepad.getStickButtonPressed(GenericHID.Hand.kLeft)) {
+            limelightTable.getEntry("ledMode").setNumber(1);
+        }
     }
 
     @Override
@@ -235,6 +244,14 @@ public class Robot extends TimedRobot {
             m_drive.arcadeDrive(m_joy.getY(), -m_joy.getX());
         }
 
+//        if (m_gamepad.getBButton()) {
+//            turretRotator.set(ControlMode.PercentOutput,.50);
+//        }
+//
+//        if (m_gamepad.getXButton()) {
+//            turretRotator.set(ControlMode.PercentOutput,-.50);
+//        }
+
         //Prints out diagnostics
         looperCounter++;
         if (looperCounter >= 10) {
@@ -247,10 +264,43 @@ public class Robot extends TimedRobot {
         Climber.periodic();
         Turret.periodic();
 //        System.out.println("debug from robot class");
+        Turret.periodic();
 
 //        flywheelMaster.set(ControlMode.PercentOutput, m_gamepad.getY(GenericHID.Hand.kRight));
-//        turretRotator.set(ControlMode.PercentOutput, m_gamepad.getY(GenericHID.Hand.kLeft) / 2);
+    }
 
+    public void seekRight() {
+        if (m_gamepad.getBButton()) {
+            if (limelightTable.getEntry("tv").getDouble(0) == 1) {
+                double seek_adjust = 0.05 * limelightTable.getEntry("tx").getDouble(0);
+                if (seek_adjust > 0.4) {
+                    seek_adjust = 0.4;
+                } else if (seek_adjust < -0.4) {
+                    seek_adjust = -0.4;
+                }
+                turretRotator.set(ControlMode.PercentOutput, -seek_adjust);
+                SmartDashboard.putNumber("seek_adjust_", -seek_adjust);
+            } else {
+                turretRotator.set(ControlMode.PercentOutput, -.20);
+            }
+        }
+    }
+
+    public void seekLeft() {
+        if(m_gamepad.getXButton()) {
+            if(limelightTable.getEntry("tv").getDouble(0) == 1) {
+                double seek_adjust = 0.05 * limelightTable.getEntry("tx").getDouble(0);
+                if(seek_adjust > 0.4) {
+                    seek_adjust = 0.4;
+                } else if(seek_adjust < -0.4) {
+                    seek_adjust = -0.4;
+                }
+                turretRotator.set(ControlMode.PercentOutput, -seek_adjust);
+                SmartDashboard.putNumber("seek_adjust_",-seek_adjust);
+            } else {
+                turretRotator.set(ControlMode.PercentOutput,.2);
+            }
+        }
     }
 
     @Override
