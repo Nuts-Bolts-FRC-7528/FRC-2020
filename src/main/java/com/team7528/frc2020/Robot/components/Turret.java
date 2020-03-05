@@ -37,34 +37,48 @@ public class Turret { // a class meant for the turret rotation
         // Setup for seeking right, left, and disengaging
         //Changed to use R Bumper instead of X - Grace
 
-        //turretRotator.set(ControlMode.PercentOutput, m_gamepad.getY(GenericHID.Hand.kLeft));
+        //turretRotator.set(ControlMode.PercentOutput, m_gamepad.getY(GenericHID.Hand.kRight));
 
-        if (m_gamepad.getBumperPressed(GenericHID.Hand.kRight)) {
-            seek_r = true;
-            seek_l = false;
-        }
+//        if (m_gamepad.getBButtonPressed()) {
+//            seek_r = true;
+//            seek_l = false;
+//            disengage = false;
+//        }
+//
+//        if (seek_r) {
+//            turretRotator.set(ControlMode.PercentOutput,.10);
+//        }
+//
+//        if (m_gamepad.getXButtonPressed()) { // left
+//            seek_l = true;
+//            seek_r = false;
+//            disengage = false;
+//        }
+//        if (seek_l) {
+//            turretRotator.set(ControlMode.PercentOutput,-.10);
+//        }
+//
+//        if (m_gamepad.getAButtonPressed()) { // disengage
+//            disengage = true;
+//            seek_r = false;
+//            seek_l = false;
+//        }
+//
+//        if (disengage) {
+//            turretRotator.set(ControlMode.PercentOutput,0);
+//        }
 
-        if (seek_r) {
-            turretRotator.set(ControlMode.PercentOutput, m_gamepad.getX(GenericHID.Hand.kLeft));
-        }
-
-        if (m_gamepad.getBumperPressed(GenericHID.Hand.kLeft)) { // left
-            seek_l = true;
-            seek_r = false;
-        }
-        if (seek_l) {
-            turretRotator.set(ControlMode.PercentOutput, m_gamepad.getX(GenericHID.Hand.kLeft));
-        }
-
-        if (m_gamepad.getBackButtonPressed()) { // disengage
-            disengage = true;
-            seek_r = false;
-            seek_l = false;
-        }
-
-        if (disengage) {
-            turretRotator.set(ControlMode.PercentOutput,0);
-        }
+//        if (m_gamepad.getBButtonPressed()) {
+//            turretRotator.set(ControlMode.PercentOutput,.10);
+//        }
+//
+//        if (m_gamepad.getXButtonPressed()) {
+//            turretRotator.set(ControlMode.PercentOutput,-.10);
+//        }
+//
+//        if (m_gamepad.getAButtonPressed()) {
+//
+//        }
 
         if ((seek_r || seek_l) && tv == 1) {
             turretRotator.set(seek_adjust);

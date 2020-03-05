@@ -167,7 +167,6 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Left Encoder", m_leftFront.getSelectedSensorPosition());
         SmartDashboard.putNumber("Right Encoder", m_rightFront.getSelectedSensorPosition());
         SmartDashboard.putNumber("Turret Encoder", turretRotator.getSelectedSensorPosition());
-        SmartDashboard.putNumber("Flywheel Velocity (Master)", -flywheelMaster.getSelectedSensorVelocity());
 
         if(m_gamepad.getStickButtonPressed(GenericHID.Hand.kRight)) {
             limelightTable.getEntry("ledMode").setNumber(0);
@@ -246,6 +245,14 @@ public class Robot extends TimedRobot {
             m_drive.arcadeDrive(m_joy.getY(), -m_joy.getX());
         }
 
+//        if (m_gamepad.getBButton()) {
+//            turretRotator.set(ControlMode.PercentOutput,.50);
+//        }
+//
+//        if (m_gamepad.getXButton()) {
+//            turretRotator.set(ControlMode.PercentOutput,-.50);
+//        }
+
         //Prints out diagnostics
         looperCounter++;
         if (looperCounter >= 10) {
@@ -256,12 +263,45 @@ public class Robot extends TimedRobot {
         // Periodic logic for components
         Flywheel.periodic();
 //        System.out.println("debug from robot class");
-//        Turret.periodic();
+        Turret.periodic();
 
 //        flywheelMaster.set(ControlMode.PercentOutput, m_gamepad.getY(GenericHID.Hand.kRight));
-//        turretRotator.set(ControlMode.PercentOutput, m_gamepad.getY(GenericHID.Hand.kLeft) / 2);
-
     }
+
+    public void seekRight() {
+        if (m_gamepad.getBButton()) {
+            if (limelightTable.getEntry("tv").getDouble(0) == 1) {
+                double seek_adjust = 0.05 * limelightTable.getEntry("tx").getDouble(0);
+                if (seek_adjust > 0.4) {
+                    seek_adjust = 0.4;
+                } else if (seek_adjust < -0.4) {
+                    seek_adjust = -0.4;
+                }
+                turretRotator.set(ControlMode.PercentOutput, -seek_adjust);
+                SmartDashboard.putNumber("seek_adjust_", -seek_adjust);
+            } else {
+                turretRotator.set(ControlMode.PercentOutput, -.20);
+            }
+        }
+    }
+
+    public void seekLeft() {
+        if(m_gamepad.getXButton()) {
+            if(limelightTable.getEntry("tv").getDouble(0) == 1) {
+                double seek_adjust = 0.05 * limelightTable.getEntry("tx").getDouble(0);
+                if(seek_adjust > 0.4) {
+                    seek_adjust = 0.4;
+                } else if(seek_adjust < -0.4) {
+                    seek_adjust = -0.4;
+                }
+                turretRotator.set(ControlMode.PercentOutput, -seek_adjust);
+                SmartDashboard.putNumber("seek_adjust_",-seek_adjust);
+            } else {
+                turretRotator.set(ControlMode.PercentOutput,.2);
+            }
+        }
+    }
+
     @Override
     public void disabledInit() {
         m_blinkin.rainbow(); //Sets blinkin to use rainbow pattern
