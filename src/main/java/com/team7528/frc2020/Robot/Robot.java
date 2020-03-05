@@ -6,8 +6,6 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 import com.team7528.frc2020.Robot.auto.AutoModeExecutor;
 import com.team7528.frc2020.Robot.auto.modes.*;
 import com.team7528.frc2020.Robot.components.Flywheel;
-import com.team7528.frc2020.Robot.components.Turret;
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -17,7 +15,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 
 import static com.team7528.frc2020.Robot.common.RobotMap.*;
 import static com.team7528.frc2020.Robot.auto.actions.DriveForwardActionGyro.ypr;
@@ -81,7 +78,6 @@ public class Robot extends TimedRobot {
 
         //Initialize Components
         Flywheel.init();
-        Turret.init();
 
         //Reset encoders to 0
         m_leftFront.setSelectedSensorPosition(0,0,10);
@@ -145,6 +141,11 @@ public class Robot extends TimedRobot {
 
         Shuffleboard.getTab("DRIVETRAIN").add("Left Encoder", -m_leftFront.getSelectedSensorPosition());
         Shuffleboard.getTab("DRIVETRAIN").add("Right Encoder", m_rightFront.getSelectedSensorPosition());
+
+        //Turret setup
+        turretRotator.configFactoryDefault();
+        turretRotator.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+        turretRotator.setSelectedSensorPosition(0,0,10);
     }
 
     @Override
@@ -154,16 +155,8 @@ public class Robot extends TimedRobot {
         SmartDashboard.putBoolean("m_drive safety",m_drive.isSafetyEnabled());
         SmartDashboard.putNumber("distance", d);
 
-        //Pigeon IMU printouts for testing
-
-        //gyroScope.getGeneralStatus(genStatus);
-        //gyroScope.getYawPitchRoll(ypr);
-//        System.out.println("Yaw:" + ypr[0]);
         SmartDashboard.putNumber("Yaw",ypr[0]);
 
-//        SmartDashboard.putNumber("Left Front Encoder", -m_leftFront.getSelectedSensorPosition());
-//        SmartDashboard.putNumber("Right Front Encoder", m_rightFront.getSelectedSensorPosition());
-//        SmartDashboard.putNumber("Distance to target", Flywheel.d); //Display distance from limelight to power port to Shuffleboard (DEBUG)
         SmartDashboard.putNumber("Left Encoder", m_leftFront.getSelectedSensorPosition());
         SmartDashboard.putNumber("Right Encoder", m_rightFront.getSelectedSensorPosition());
         SmartDashboard.putNumber("Turret Encoder", turretRotator.getSelectedSensorPosition());
@@ -202,13 +195,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousPeriodic() {
-
-        //Prints Stats during auto
-        //looperCounter++;
-        /*f (looperCounter >= 10) {
-            printStats();
-            looperCounter = 0;
-        }*/
     }
 
     /**
@@ -245,32 +231,13 @@ public class Robot extends TimedRobot {
             m_drive.arcadeDrive(m_joy.getY(), -m_joy.getX());
         }
 
-//        if (m_gamepad.getBButton()) {
-//            turretRotator.set(ControlMode.PercentOutput,.50);
-//        }
-//
-//        if (m_gamepad.getXButton()) {
-//            turretRotator.set(ControlMode.PercentOutput,-.50);
-//        }
-
-        //Prints out diagnostics
-        looperCounter++;
-        if (looperCounter >= 10) {
-//            printStats();
-            looperCounter = 0;
-        }
-
         // Periodic logic for components
         Flywheel.periodic();
-//        System.out.println("debug from robot class");
-        Turret.periodic();
 
-//        flywheelMaster.set(ControlMode.PercentOutput, m_gamepad.getY(GenericHID.Hand.kRight));
-    }
+        /*   [TURRET]   */
 
-    public void seekRight() {
-        if (m_gamepad.getBButton()) {
-            if (limelightTable.getEntry("tv").getDouble(0) == 1) {
+        if (m_gamepad.getBButton() || m_gamepad.getXButton()) { //If either B or X is pressed
+            if (limelightTable.getEntry("tv").getDouble(0) == 1) { //Auto locate target
                 double seek_adjust = 0.05 * limelightTable.getEntry("tx").getDouble(0);
                 if (seek_adjust > 0.4) {
                     seek_adjust = 0.4;
@@ -279,26 +246,11 @@ public class Robot extends TimedRobot {
                 }
                 turretRotator.set(ControlMode.PercentOutput, -seek_adjust);
                 SmartDashboard.putNumber("seek_adjust_", -seek_adjust);
-            } else {
-                turretRotator.set(ControlMode.PercentOutput, -.20);
             }
-        }
-    }
-
-    public void seekLeft() {
-        if(m_gamepad.getXButton()) {
-            if(limelightTable.getEntry("tv").getDouble(0) == 1) {
-                double seek_adjust = 0.05 * limelightTable.getEntry("tx").getDouble(0);
-                if(seek_adjust > 0.4) {
-                    seek_adjust = 0.4;
-                } else if(seek_adjust < -0.4) {
-                    seek_adjust = -0.4;
-                }
-                turretRotator.set(ControlMode.PercentOutput, -seek_adjust);
-                SmartDashboard.putNumber("seek_adjust_",-seek_adjust);
-            } else {
-                turretRotator.set(ControlMode.PercentOutput,.2);
-            }
+        } else if(m_gamepad.getXButton()) { //If X is pressed, go left with 20% power
+            turretRotator.set(ControlMode.PercentOutput, 0.2);
+        } else if (m_gamepad.getBButton()) { //If B is pressed, go right with 20% power
+            turretRotator.set(ControlMode.PercentOutput, -0.2);
         }
     }
 
@@ -312,26 +264,5 @@ public class Robot extends TimedRobot {
         driveForwardAutoFeet.stop();
 
         System.out.println(totallyUseful);
-    }
-
-
-
-    //gyroScope.getYawPitchRoll(ypr);
-    //System.out.println("Yaw:" + ypr[0]);
-
-    /**
-     * Prints out statistics
-     */
-    private void printStats() {
-        _sb.append("**********");
-        _sb.append("\ntimestamp").append(sdf.format(Instant.now().getEpochSecond()));
-        _sb.append("\tleft-front").append(m_leftFront.get());
-        _sb.append("\tright-front").append(m_rightFront.get());
-        _sb.append("\tleft-aft").append(m_leftAft.get());
-        _sb.append("\tright-aft").append(m_rightAft.get());
-        _sb.append("\n**********");
-
-        //Prints out the string builder
-        System.out.println(_sb.toString());
     }
 }
