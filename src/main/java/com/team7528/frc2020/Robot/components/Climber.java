@@ -12,9 +12,11 @@ import static com.team7528.frc2020.Robot.common.RobotMap.*;
 public class Climber {
 
     public static void init() {
-        climberElevatorPiston.set(DoubleSolenoid.Value.kReverse); //Sets the piston to be in
+        winchMaster.configFactoryDefault(); //Format motor controller to factory default
+        winchSlave.configFactoryDefault(); //Format motor controller to factory default
         winchSlave.follow(winchMaster); //Make the slave follow the master
         winchSlave.setInverted(true); //Make the slave inverted
+        climberElevatorPiston.set(DoubleSolenoid.Value.kReverse); //Sets the piston to be in
     }
 
     public static void periodic() {

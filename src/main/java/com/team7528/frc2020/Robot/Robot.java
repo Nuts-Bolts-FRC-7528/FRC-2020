@@ -2,7 +2,6 @@ package com.team7528.frc2020.Robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.sensors.PigeonIMU;
 import com.team7528.frc2020.Robot.auto.AutoModeExecutor;
 import com.team7528.frc2020.Robot.auto.modes.*;
 import com.team7528.frc2020.Robot.components.Flywheel;
@@ -21,16 +20,8 @@ import static com.team7528.frc2020.Robot.common.RobotMap.*;
 import static com.team7528.frc2020.Robot.auto.actions.DriveForwardActionGyro.ypr;
 import static com.team7528.frc2020.Robot.components.Flywheel.d;
 
-@SuppressWarnings({"unused", "SpellCheckingInspection"})
+@SuppressWarnings({"SpellCheckingInspection"})
 public class Robot extends TimedRobot {
-
-    //Prints out stats regarding the string builder
-    private StringBuilder _sb = new StringBuilder();
-    private int looperCounter = 0;
-    private SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy HH:mm:ss");
-
-    //Pigeon IMU stuff
-    PigeonIMU.GeneralStatus genStatus = new PigeonIMU.GeneralStatus();
 
     //Lets you pick an autonomous code
     private AutoModeExecutor doNothingAuto = new AutoModeExecutor(new DoNothingAuto());
@@ -45,7 +36,6 @@ public class Robot extends TimedRobot {
     private AutoModeExecutor rightTurnAuto = new AutoModeExecutor(new RightTurnAuto());
 
     private Double fineControlSpeedDouble;
-    private int totallyUseful;
 
     private SendableChooser<AutoModeExecutor> autoPicker = new SendableChooser<>();
     private SendableChooser<Double> fineControlSpeed = new SendableChooser<>();
@@ -56,7 +46,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotInit() {
-
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy HH:mm:ss");
         //Defines a new string builder
         StringBuilder _initSb = new StringBuilder();
 
@@ -263,7 +253,5 @@ public class Robot extends TimedRobot {
         AutoModeExecutor chosenAuto = autoPicker.getSelected();
         chosenAuto.stop();
         driveForwardAutoFeet.stop();
-
-        System.out.println(totallyUseful);
     }
 }
