@@ -51,6 +51,7 @@ public class Flywheel {
     private static double previousError; //The previous iteration's error
     private static double speed; //The speed to set for the flywheel motor
     private static boolean isDipping = false; //If the motor velocity dipping or not
+    public static boolean shootOverride = false; //Allows other classes to start shooting
     //Shuffleboard entry to alert the operator if they're in the 3 point range
     public static NetworkTableEntry threePointDistanceEntry = Shuffleboard.getTab("DRIVETRAIN").
             add("3-POINT RANGE",false).getEntry();
@@ -96,7 +97,7 @@ public class Flywheel {
      * Sets up shooting when we are holding start
      */
     private static void shooting() {
-        if (m_gamepad.getStartButton()) { //If the start button is pressed
+        if (m_gamepad.getStartButton() || shootOverride) { //If the start button is pressed
             if (Math.abs(kVelocitySetpoint - -flywheelMaster.getSelectedSensorVelocity()) <= kFlywheelTolerance) { // ... and we're close enough to the desired RPM ...
                 SmartDashboard.putBoolean("AUTO SHOOT READY", true); //Alert driver that the shooting is ready
                 runConveyor(); //Convey balls into the flywheel
@@ -106,7 +107,7 @@ public class Flywheel {
             if (previousError - -flywheelMaster.getSelectedSensorVelocity() >= kDip && !isDipping) { //If previous error and current error is greater than or equal to the dip and it's not dipping
                 isDipping = true;
                 PowerCellIntake.powerCellCount--;
-            } else if (!(previousError - -flywheelMaster.getSelectedSensorVelocity() >= kDip && !isDipping)) { //If the last if statement isn't true
+            } else if (!(previousError - -flywheelMaster.getSelectedSensorVelocity() >= kDip)) { //If the last if statement isn't true
                 isDipping = false;
             }
             PID(); //Calculate PIDF loop
