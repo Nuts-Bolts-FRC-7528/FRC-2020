@@ -41,6 +41,9 @@ public class Flywheel {
     private static double errorSum; //The sum of the errors
     private static double previousError; //The previous iteration's error
     private static double speed; //The speed to set for the flywheel motor
+    private static boolean isDipping = false; //If the speed of the motor is dipping
+    private static final double dip = 2000; //The amount it should dip by
+
 
     /**
      * Sets Phoenix motor settings
@@ -86,6 +89,12 @@ public class Flywheel {
                 runConveyor(); //Convey balls into the flywheel
             } else { //If we are NOT within our tolerance
                 SmartDashboard.putBoolean("AUTO SHOOT READY", false); //Alert the operator
+            }
+            if (previousError -flywheelMaster.getSelectedSensorVelocity() >= dip && !isDipping) {
+                isDipping = true;
+                PowerCellIntake.powerCellCount--;
+            } else if (!(previousError -flywheelMaster.getSelectedSensorVelocity() >= dip && !isDipping)){
+                isDipping = false;
             }
             PID(); //Calculate PIDF loop
             flywheelMaster.set(ControlMode.PercentOutput, -speed); //Run the motor at the calculated level
