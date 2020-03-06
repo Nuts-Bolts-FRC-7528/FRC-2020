@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import static com.team7528.frc2020.Robot.common.RobotMap.*;
+import static com.team7528.frc2020.Robot.components.PowerCellIntake.powerCellCount;
 
 /**
  * Class for the flywheel component. Also handles calculating the distance to the target using a Limelight.
@@ -34,7 +35,7 @@ public class Flywheel {
     private static final double kIntegratorZone = 1000; //Within this many ticks of the setpoint, errorSum will increase
     private static final double kFlywheelTolerance = 100; //The flywheel tolerance
     private static final double kVelocitySetpoint = 20000; //Desired encoder velocity
-    private static final double kDip = 2000; //The amount that the motor velocity would dip
+    private static final double kDip = 2000; //The amount that the motor velocity would dip when a power cell runs through
 
     /*   [RANGE CONSTANTS]   */
     private static final double kMinThreePoint = 12; //Minimum distance you're likely to get an inner port shot from (PLACEHOLDER VALUE)
@@ -50,7 +51,6 @@ public class Flywheel {
     private static double errorSum; //The sum of the errors
     private static double previousError; //The previous iteration's error
     private static double speed; //The speed to set for the flywheel motor
-    private static boolean isDipping = false; //If the motor velocity dipping or not
     public static boolean shootOverride = false; //Allows other classes to start shooting
     //Shuffleboard entry to alert the operator if they're in the 3 point range
     public static NetworkTableEntry threePointDistanceEntry = Shuffleboard.getTab("DRIVETRAIN").
@@ -58,6 +58,7 @@ public class Flywheel {
     //Shuffleboard entry to alert the operator if they're in the viable range to make any power port shot
     public static NetworkTableEntry viableDistanceEntry = Shuffleboard.getTab("DRIVETRAIN").
             add("VIABLE RANGE",false).getEntry();
+    private static boolean velocityDipped;
 
     /**
      * Sets Phoenix motor settings
@@ -104,11 +105,13 @@ public class Flywheel {
             } else { //If we are NOT within our tolerance
                 SmartDashboard.putBoolean("AUTO SHOOT READY", false); //Alert the operator
             }
-            if (previousError - -flywheelMaster.getSelectedSensorVelocity() >= kDip && !isDipping) { //If previous error and current error is greater than or equal to the dip and it's not dipping
-                isDipping = true;
-                PowerCellIntake.powerCellCount--;
-            } else if (!(previousError - -flywheelMaster.getSelectedSensorVelocity() >= kDip)) { //If the last if statement isn't true
-                isDipping = false;
+            if (velocityDipped && -flywheelMaster.getSelectedSensorVelocity() >= kVelocitySetpoint) {
+                powerCellCount--;
+                velocityDipped = false;
+            }
+
+            if (-flywheelMaster.getSelectedSensorVelocity() <= kDip /*Placeholder value*/) {
+                velocityDipped = true;
             }
             PID(); //Calculate PIDF loop
             flywheelMaster.set(ControlMode.PercentOutput, -speed); //Run the motor at the calculated level
