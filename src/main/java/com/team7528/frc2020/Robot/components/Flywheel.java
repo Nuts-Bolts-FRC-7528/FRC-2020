@@ -3,7 +3,9 @@ package com.team7528.frc2020.Robot.components;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import static com.team7528.frc2020.Robot.common.RobotMap.*;
@@ -30,8 +32,14 @@ public class Flywheel {
     private static final double kD = 0.0; //D constant for PID loop
     private static final double kF = 0.005; //Feedforward Setpoint for PID loop
     private static final double kIntegratorZone = 1000; //Within this many ticks of the setpoint, errorSum will increase
-    private static final double k_flywheelTolerance = 100; //The flywheel tolerance
-    private static final double velocitySetpoint = 20000; //Desired encoder velocity
+    private static final double kFlywheelTolerance = 100; //The flywheel tolerance
+    private static final double kVelocitySetpoint = 20000; //Desired encoder velocity
+
+    /*   [RANGE CONSTANTS]   */
+    private static final double kMinThreePoint = 12; //Minimum distance you're likely to get an inner port shot from (PLACEHOLDER VALUE)
+    private static final double kMaxThreePoint = 12; //Maximum distance you're likely to get an inner port shot from (PLACEHOLDER VALUE)
+    private static final double kMinViableRange = 5; //Minimum distance you'll make it into the outer port from (PLACEHOLDER VALUE)
+    private static final double kMaxViableRange = 20; //Maximum distance you'll make it into the outer port from (PLACEHOLDER VALUE)
 
     /*   [VARIABLES]   */
     public static double d; //The distance to the target
@@ -41,6 +49,12 @@ public class Flywheel {
     private static double errorSum; //The sum of the errors
     private static double previousError; //The previous iteration's error
     private static double speed; //The speed to set for the flywheel motor
+    //Shuffleboard entry to alert the operator if they're in the 3 point range
+    public static NetworkTableEntry threePointDistanceEntry = Shuffleboard.getTab("DRIVETRAIN").
+            add("3-POINT RANGE",false).getEntry();
+    //Shuffleboard entry to alert the operator if they're in the viable range to make any power port shot
+    public static NetworkTableEntry viableDistanceEntry = Shuffleboard.getTab("DRIVETRAIN").
+            add("VIABLE RANGE",false).getEntry();
 
     /**
      * Sets Phoenix motor settings
@@ -81,7 +95,7 @@ public class Flywheel {
      */
     private static void shooting() {
         if (m_gamepad.getStartButton()) { //If the start button is pressed
-            if (Math.abs(velocitySetpoint - -flywheelMaster.getSelectedSensorVelocity()) <= k_flywheelTolerance) { // ... and we're close enough to the desired RPM ...
+            if (Math.abs(kVelocitySetpoint - -flywheelMaster.getSelectedSensorVelocity()) <= kFlywheelTolerance) { // ... and we're close enough to the desired RPM ...
                 SmartDashboard.putBoolean("AUTO SHOOT READY", true); //Alert driver that the shooting is ready
                 runConveyor(); //Convey balls into the flywheel
             } else { //If we are NOT within our tolerance
@@ -99,12 +113,12 @@ public class Flywheel {
      * Calculate PID outputs
      */
     private static void PID() {
-        error = (velocitySetpoint - -flywheelMaster.getSelectedSensorVelocity()); //Calculate error
+        error = (kVelocitySetpoint - -flywheelMaster.getSelectedSensorVelocity()); //Calculate error
         if(Math.abs(error) <= kIntegratorZone) { //If we are within our integrator zone
             errorSum += error * 0.02; //Add the error to the error sum
         }
         errorRate = (error - previousError) / 0.02; //Find the rate of change of the error
-        speed = (kF * velocitySetpoint + kP * error + kI * errorSum + kD * errorRate) / 100.0; //Calculate PIDF
+        speed = (kF * kVelocitySetpoint + kP * error + kI * errorSum + kD * errorRate) / 100.0; //Calculate PIDF
 
         if(speed < 0) { //If speed is negative
             speed = 0; //Set speed to 0 (The flywheel should not run in reverse)
@@ -115,14 +129,27 @@ public class Flywheel {
 
     /**
      * Reports Telemetry to the Driver Station including the PIDF speed, setpoint, error, errorSum,
-     * and flywheel master motor encoder velocity
+     * and flywheel master motor encoder velocity. Also tells operator when they're in the range
+     * for an outer port and/or inner port shot
      */
     private static void reportStatistics() {
         SmartDashboard.putNumber("Speed value", speed);
-        SmartDashboard.putNumber("Desired RPM", velocitySetpoint);
+        SmartDashboard.putNumber("Desired RPM", kVelocitySetpoint);
         SmartDashboard.putNumber("Error", error);
         SmartDashboard.putNumber("ErrorSum", errorSum);
         SmartDashboard.putNumber("Flywheel Velocity (Master)", -flywheelMaster.getSelectedSensorVelocity());
+
+        if(d >= kMinThreePoint && d <= kMaxThreePoint) { //If we are in the range for a 3-point shot
+            threePointDistanceEntry.setBoolean(true); //Alert operator
+        } else { //If we are not in the range for a 3-point shot
+            threePointDistanceEntry.setBoolean(false); //Alert operator
+        }
+
+        if(d >= kMinViableRange && d <= kMaxViableRange) { //If we are in the viable range for any power port shot
+            viableDistanceEntry.setBoolean(true); //Alert operator
+        } else { //If we cannot make a shot into the power port
+            viableDistanceEntry.setBoolean(false); //Alert operator
+        }
     }
 
     /**
