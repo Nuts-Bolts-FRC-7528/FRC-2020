@@ -34,6 +34,7 @@ public class Flywheel {
     private static final double kIntegratorZone = 1000; //Within this many ticks of the setpoint, errorSum will increase
     private static final double kFlywheelTolerance = 100; //The flywheel tolerance
     private static final double kVelocitySetpoint = 20000; //Desired encoder velocity
+    private static final double kDip = 2000; //The amount that the motor velocity would dip
 
     /*   [RANGE CONSTANTS]   */
     private static final double kMinThreePoint = 12; //Minimum distance you're likely to get an inner port shot from (PLACEHOLDER VALUE)
@@ -49,6 +50,7 @@ public class Flywheel {
     private static double errorSum; //The sum of the errors
     private static double previousError; //The previous iteration's error
     private static double speed; //The speed to set for the flywheel motor
+    private static boolean isDipping = false; //If the motor velocity dipping or not
     //Shuffleboard entry to alert the operator if they're in the 3 point range
     public static NetworkTableEntry threePointDistanceEntry = Shuffleboard.getTab("DRIVETRAIN").
             add("3-POINT RANGE",false).getEntry();
@@ -100,6 +102,12 @@ public class Flywheel {
                 runConveyor(); //Convey balls into the flywheel
             } else { //If we are NOT within our tolerance
                 SmartDashboard.putBoolean("AUTO SHOOT READY", false); //Alert the operator
+            }
+            if (previousError - -flywheelMaster.getSelectedSensorVelocity() >= kDip && !isDipping) { //If previous error and current error is greater than or equal to the dip and it's not dipping
+                isDipping = true;
+                PowerCellIntake.powerCellCount--;
+            } else if (!(previousError - -flywheelMaster.getSelectedSensorVelocity() >= kDip && !isDipping)) { //If the last if statement isn't true
+                isDipping = false;
             }
             PID(); //Calculate PIDF loop
             flywheelMaster.set(ControlMode.PercentOutput, -speed); //Run the motor at the calculated level
