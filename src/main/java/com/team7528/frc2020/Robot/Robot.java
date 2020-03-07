@@ -34,6 +34,7 @@ public class Robot extends TimedRobot {
     private AutoModeExecutor leftTurnAuto = new AutoModeExecutor(new LeftTurnAuto());
     private AutoModeExecutor uTurnAuto = new AutoModeExecutor(new UTurnAuto());
     private AutoModeExecutor rightTurnAuto = new AutoModeExecutor(new RightTurnAuto());
+    private AutoModeExecutor shootMoveBackAuto = new AutoModeExecutor(new ShootMoveBackAuto());
 
     private Double fineControlSpeedDouble;
 
@@ -83,7 +84,8 @@ public class Robot extends TimedRobot {
         m_rightFront.setInverted(false);
 
         //Auto code choosing
-        autoPicker.setDefaultOption("Do Nothing", doNothingAuto);
+        autoPicker.setDefaultOption("Shoot and Move Back", shootMoveBackAuto);
+        autoPicker.addOption("Do Nothing", doNothingAuto);
         autoPicker.addOption("Move Forward (Gyro)", moveForwardAutoGyro);
         autoPicker.addOption("Move Forward (Encoder)", moveForwardAutoEncoder);
         autoPicker.addOption("Move Forward (Feet)", driveForwardAutoFeet);
@@ -186,6 +188,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousPeriodic() {
+        Flywheel.periodic();
     }
 
     /**
