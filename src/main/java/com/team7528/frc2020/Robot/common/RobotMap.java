@@ -34,8 +34,11 @@ public class RobotMap {
     //PowerCell Shooter
     public static WPI_TalonSRX ballConveyor = new WPI_TalonSRX(3);
     public static WPI_TalonSRX turretRotator = new WPI_TalonSRX(20);
-    public static WPI_TalonFX flywheelMaster = new WPI_TalonFX(18);
-    public static WPI_TalonFX flywheelSlave = new WPI_TalonFX(19);
+    public static TalonSRX leftFlywheelMaster = new TalonSRX(9);
+    public static TalonSRX rightBackupFlywheelMaster = new TalonSRX(6);
+    public static TalonSRX leftFlywheelSlave = new TalonSRX(3);
+    public static TalonSRX rightFlywheelSlave = new TalonSRX(4);
+
 
     public static TalonSRX imuTalon = new TalonSRX(50);
 

@@ -41,6 +41,7 @@ public class Robot extends TimedRobot {
     private SendableChooser<AutoModeExecutor> autoPicker = new SendableChooser<>();
     private SendableChooser<Double> fineControlSpeed = new SendableChooser<>();
     private SendableChooser<Double> deadBandOptions = new SendableChooser<>();
+    private SendableChooser<Boolean> flywheelEncoderChooser = new SendableChooser<>();
     /**
      * Initiates motor controller set up
      */
@@ -53,6 +54,12 @@ public class Robot extends TimedRobot {
 
         //Defines a new differential drive
         m_drive = new DifferentialDrive(m_leftFront, m_rightFront);
+
+        //Reset flywheel motors
+        leftFlywheelMaster.configFactoryDefault();
+        rightBackupFlywheelMaster.configFactoryDefault();
+        leftFlywheelSlave.configFactoryDefault();
+        rightFlywheelSlave.configFactoryDefault();
 
         //Resets talons to factory default
         m_leftFront.configFactoryDefault();
@@ -67,9 +74,6 @@ public class Robot extends TimedRobot {
         m_rightFront.setSensorPhase(false);
 
         //imuTalon.configSelectedFeedbackSensor()
-
-        //Initialize Components
-        Flywheel.init();
 
         //Reset encoders to 0
         m_leftFront.setSelectedSensorPosition(0,0,10);
@@ -95,7 +99,13 @@ public class Robot extends TimedRobot {
         autoPicker.addOption("Turn Right", rightTurnAuto);
         autoPicker.addOption("Turn Around", uTurnAuto);
         autoPicker.addOption("Turn Left", leftTurnAuto);
+        autoPicker.addOption("Shoot & Move Back", shootMoveBackAuto);
         Shuffleboard.getTab("DRIVETRAIN").add("Auto Mode", autoPicker);
+
+        //Flywheel encoder chooser
+        flywheelEncoderChooser.setDefaultOption("Primary",false);
+        flywheelEncoderChooser.addOption("Backup",true);
+        Shuffleboard.getTab("DRIVETRAIN").add("Backup Flywheel Encoder", flywheelEncoderChooser);
 
         // Fine Control Speed choosing
         fineControlSpeed.addOption("35% Speed", 0.35);
@@ -161,6 +171,9 @@ public class Robot extends TimedRobot {
         if(m_gamepad.getStickButtonPressed(GenericHID.Hand.kLeft)) {
             limelightTable.getEntry("ledMode").setNumber(1);
         }
+
+        // Periodic logic for components
+        Flywheel.periodic();
     }
 
     @Override
@@ -172,6 +185,9 @@ public class Robot extends TimedRobot {
         m_leftFront.setSelectedSensorPosition(0,0,10);
         m_rightFront.setSelectedSensorPosition(0,0,10);
 
+        //Set up for which encoder is chosen
+        Flywheel.isUsingBackupEncoder = flywheelEncoderChooser.getSelected();
+
         //Start Auto
         AutoModeExecutor chosenAuto = autoPicker.getSelected();
         chosenAuto.start();
@@ -181,6 +197,9 @@ public class Robot extends TimedRobot {
 
         //Set LED to alliance color
         m_blinkin.setToTeamColor(false);
+
+        //Initialize Components
+        Flywheel.init();
     }
 
     /**
@@ -224,11 +243,6 @@ public class Robot extends TimedRobot {
             //Sets up arcade drive
             m_drive.arcadeDrive(m_joy.getY(), -m_joy.getX());
         }
-
-        // Periodic logic for components
-        Flywheel.periodic();
-
-        /*   [TURRET]   */
 
         if (m_gamepad.getBButton() || m_gamepad.getXButton()) { //If either B or X is pressed
             if (limelightTable.getEntry("tv").getDouble(0) == 1) { //Auto locate target
