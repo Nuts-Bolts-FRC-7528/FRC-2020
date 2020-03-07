@@ -26,13 +26,9 @@ public class RobotMap {
     //Creates a new variable for how the wheels of the robot will move
     public static DifferentialDrive m_drive;
 
-    // Control Panel
-    public static WPI_TalonSRX controlPanelWheel = new WPI_TalonSRX(0);
-//    public static DoubleSolenoid m_wheelEjector = new DoubleSolenoid(2,3);
-    public static ColorSensorV3 colors = new ColorSensorV3(I2C.Port.kOnboard);
-
     //PowerCell Shooter
-    public static WPI_TalonSRX ballConveyor = new WPI_TalonSRX(3);
+    public static TalonSRX horizontalPulley = new TalonSRX(3);
+    public static TalonSRX verticalPulley = new TalonSRX(4);
     public static WPI_TalonSRX turretRotator = new WPI_TalonSRX(20);
     public static TalonSRX leftFlywheelMaster = new TalonSRX(9);
     public static TalonSRX rightBackupFlywheelMaster = new TalonSRX(6);

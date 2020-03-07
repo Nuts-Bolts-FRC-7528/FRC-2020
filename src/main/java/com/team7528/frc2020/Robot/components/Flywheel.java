@@ -172,10 +172,11 @@ public class Flywheel {
     }
 
     /**
-     * Shoots the ball
+     * Conveys balls into the flywheel
      */
     public static void runConveyor() {
-        ballConveyor.set(0.2);
+        horizontalPulley.set(ControlMode.PercentOutput, 0.2);
+        verticalPulley.set(ControlMode.PercentOutput, 0.2);
     }
 
     /**
