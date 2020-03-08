@@ -12,6 +12,7 @@ import static com.team7528.frc2020.Robot.common.RobotMap.*;
  *
  * @author Robert Garcia
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class PowerCellIntake {
     private static double error;
     private static double previousError;
@@ -45,7 +46,7 @@ public class PowerCellIntake {
 
             //intake.set(DoubleSolenoid.Value.kReverse); //drops piston
             intakeMotor.set(ControlMode.PercentOutput,-speed); //moves wheels to intake balls
-            horizontalPulley.set(ControlMode.PercentOutput,0.2);
+            Flywheel.runConveyor(); //Move balls up the trough
 
             if(!ballCounter.get() && !isReadingBall) { //If ball sensor is reading ball being intaked
                 powerCellCount++; //Increase power cell count by one

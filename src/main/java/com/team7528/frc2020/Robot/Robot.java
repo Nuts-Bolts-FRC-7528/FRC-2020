@@ -20,7 +20,7 @@ import static com.team7528.frc2020.Robot.common.RobotMap.*;
 import static com.team7528.frc2020.Robot.auto.actions.DriveForwardActionGyro.ypr;
 import static com.team7528.frc2020.Robot.components.Flywheel.d;
 
-@SuppressWarnings({"SpellCheckingInspection"})
+@SuppressWarnings({"SpellCheckingInspection", "FieldCanBeLocal"})
 public class Robot extends TimedRobot {
 
     //Lets you pick an autonomous code
@@ -42,6 +42,11 @@ public class Robot extends TimedRobot {
     private SendableChooser<Double> fineControlSpeed = new SendableChooser<>();
     private SendableChooser<Double> deadBandOptions = new SendableChooser<>();
     private SendableChooser<Boolean> flywheelEncoderChooser = new SendableChooser<>();
+
+    private final double kTurretAlignmentP = 0.03;
+    private final double kTurretSpeedLimit = 0.2;
+    private final int kTurretLimit = 3200;
+
     /**
      * Initiates motor controller set up
      */
@@ -51,6 +56,18 @@ public class Robot extends TimedRobot {
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy HH:mm:ss");
         //Defines a new string builder
         StringBuilder _initSb = new StringBuilder();
+
+        //Turret setup
+        turretRotator.configFactoryDefault();
+        turretRotator.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+        turretRotator.setSelectedSensorPosition(0,0,10);
+        turretRotator.setInverted(true);
+        turretRotator.setSensorPhase(true);
+        turretRotator.configReverseSoftLimitThreshold(-kTurretLimit,10);
+        turretRotator.configForwardSoftLimitThreshold(kTurretLimit,10);
+        turretRotator.configForwardSoftLimitEnable(true,10);
+        turretRotator.configReverseSoftLimitEnable(true,10);
+
 
         //Defines a new differential drive
         m_drive = new DifferentialDrive(m_leftFront, m_rightFront);
@@ -144,11 +161,6 @@ public class Robot extends TimedRobot {
 
         Shuffleboard.getTab("DRIVETRAIN").add("Left Encoder", -m_leftFront.getSelectedSensorPosition());
         Shuffleboard.getTab("DRIVETRAIN").add("Right Encoder", m_rightFront.getSelectedSensorPosition());
-
-        //Turret setup
-        turretRotator.configFactoryDefault();
-        turretRotator.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-        turretRotator.setSelectedSensorPosition(0,0,10);
     }
 
     @Override
@@ -166,10 +178,12 @@ public class Robot extends TimedRobot {
 
         if(m_gamepad.getStickButtonPressed(GenericHID.Hand.kRight)) {
             limelightTable.getEntry("ledMode").setNumber(0);
+            limelightTable.getEntry("camMode").setNumber(0);
         }
 
         if(m_gamepad.getStickButtonPressed(GenericHID.Hand.kLeft)) {
             limelightTable.getEntry("ledMode").setNumber(1);
+            limelightTable.getEntry("camMode").setNumber(1);
         }
 
         // Periodic logic for components
@@ -244,21 +258,21 @@ public class Robot extends TimedRobot {
             m_drive.arcadeDrive(m_joy.getY(), -m_joy.getX());
         }
 
-        if (m_gamepad.getBButton() || m_gamepad.getXButton()) { //If either B or X is pressed
-            if (limelightTable.getEntry("tv").getDouble(0) == 1) { //Auto locate target
-                double seek_adjust = 0.05 * limelightTable.getEntry("tx").getDouble(0);
-                if (seek_adjust > 0.4) {
-                    seek_adjust = 0.4;
-                } else if (seek_adjust < -0.4) {
-                    seek_adjust = -0.4;
-                }
-                turretRotator.set(ControlMode.PercentOutput, -seek_adjust);
-                SmartDashboard.putNumber("seek_adjust_", -seek_adjust);
-            } else if(m_gamepad.getXButton()) { //If X is pressed, go left with 20% power
-                turretRotator.set(ControlMode.PercentOutput, 0.2);
-            } else if (m_gamepad.getBButton()) { //If B is pressed, go right with 20% power
-                turretRotator.set(ControlMode.PercentOutput, -0.2);
+        if ((m_gamepad.getBButton() || m_gamepad.getXButton()) && limelightTable.getEntry("tv").getDouble(0) == 1) { //If either B or X is pressed
+            double seek_adjust = kTurretAlignmentP * limelightTable.getEntry("tx").getDouble(0);
+            if (seek_adjust > kTurretSpeedLimit) {
+                seek_adjust = kTurretSpeedLimit;
+            } else if (seek_adjust < -kTurretSpeedLimit) {
+                seek_adjust = -kTurretSpeedLimit;
             }
+            turretRotator.set(ControlMode.PercentOutput, seek_adjust);
+            SmartDashboard.putNumber("seek_adjust_", -seek_adjust);
+        } else if(m_gamepad.getXButton()) { //If X is pressed, go left with 20% power
+            turretRotator.set(ControlMode.PercentOutput, -kTurretSpeedLimit);
+        } else if (m_gamepad.getBButton()) { //If B is pressed, go right with 20% power
+            turretRotator.set(ControlMode.PercentOutput, kTurretSpeedLimit);
+        } else { //If no buttons pressed, do not move the turret
+            turretRotator.set(ControlMode.PercentOutput, 0.0);
         }
     }
 
