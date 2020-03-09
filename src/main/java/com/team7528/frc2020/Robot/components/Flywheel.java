@@ -14,9 +14,6 @@ import static com.team7528.frc2020.Robot.components.PowerCellIntake.powerCellCou
 
 /**
  * Class for the flywheel component. Also handles calculating the distance to the target using a Limelight.
- * Note that the flywheel encoder velocity has to be reversed each time we use it, as it is out of phase with
- * the direction it is actually moving in. The setPhase() method appears to do nothing in this regard, so we
- * simply need to invert it each time it is used.
  *
  * @author Matthew Correia
  */
@@ -48,7 +45,7 @@ public class Flywheel {
     private static double error; //The difference between desiredRPM & currentRPM
     private static double errorSum; //The sum of the errors
     private static double previousError; //The previous iteration's error
-    private static double speed; //The speed to set for the flywheel motor
+    private static double speed = .20; //The speed to set for the flywheel motor
     public static boolean shootOverride = false; //Allows other classes to start shooting
     public static boolean isUsingBackupEncoder = false;
     //Shuffleboard entry to alert the operator if they're in the 3 point range
@@ -63,33 +60,25 @@ public class Flywheel {
      * Sets Phoenix motor settings
      */
     public static void init() {
+        //Config flywheel factory defaults
+        leftFlywheelMaster.configFactoryDefault();
+        leftFlywheelSlave.configFactoryDefault();
+        rightFlywheelSlave.configFactoryDefault();
+        rightBackupFlywheelMaster.configFactoryDefault();
+
+        //Configure feedback sensor
         leftFlywheelMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder,0,10);
         rightBackupFlywheelMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder,0,10);
 
-        if (!isUsingBackupEncoder) { //If it's not using a backup encoder, follow left master and invert right
-            rightBackupFlywheelMaster.follow(leftFlywheelMaster);
-            leftFlywheelSlave.follow(leftFlywheelMaster);
-            rightFlywheelSlave.follow(leftFlywheelMaster);
-
-            rightBackupFlywheelMaster.setInverted(true);
-            rightFlywheelSlave.setInverted(true);
-            leftFlywheelMaster.setInverted(false);
-            leftFlywheelSlave.setInverted(false);
-        } else { //If it is using a backup encoder, follow , follow right backup and invert left
-            leftFlywheelMaster.follow(rightBackupFlywheelMaster);
-            rightFlywheelSlave.follow(rightBackupFlywheelMaster);
-            leftFlywheelSlave.follow(rightBackupFlywheelMaster);
-
-            leftFlywheelMaster.setInverted(true);
-            leftFlywheelSlave.setInverted(true);
-            rightBackupFlywheelMaster.setInverted(false);
-            rightFlywheelSlave.setInverted(false);
-        }
+        //Configure inversion as needed
+        leftFlywheelSlave.setInverted(true);
     }
+
 
     /**
      * Shoots the ball when start is pressed and prints statistics
      */
+
     public static void periodic() {
         //The angle from the limelight
         double a2 = limelightTable.getEntry("ty").getDouble(0); //Sets a2, the y position of the target
@@ -103,6 +92,16 @@ public class Flywheel {
         reportStatistics(); //Report telemetry to the Driver Station
     }
 
+    /**
+     * Turns all flywheel motors
+     * @param speed The speed to spin the flywheel motors as a percentage (-1.0 to 1.0)
+     */
+    public static void setFlywheel(double speed){
+        leftFlywheelMaster.set(ControlMode.PercentOutput, speed);
+        rightBackupFlywheelMaster.set(ControlMode.PercentOutput, speed);
+        leftFlywheelSlave.set(ControlMode.PercentOutput, speed);
+        rightFlywheelSlave.set(ControlMode.PercentOutput, speed);
+    }
     /**
      * Sets up shooting when we are holding start
      */
