@@ -2,10 +2,12 @@ package com.team7528.frc2020.Robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.team7528.frc2020.Robot.auto.AutoModeExecutor;
 import com.team7528.frc2020.Robot.auto.modes.*;
 import com.team7528.frc2020.Robot.components.Flywheel;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -54,8 +56,11 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy HH:mm:ss");
-        //Defines a new string builder
-        StringBuilder _initSb = new StringBuilder();
+        StringBuilder _initSb = new StringBuilder(); //Holds startup data
+        _initSb.append("ROBOT CODE VERSION: FRC-2020 cvr-code\n");
+
+        //Initialize components
+        Flywheel.init();
 
         //Turret setup
         turretRotator.configFactoryDefault();
@@ -175,6 +180,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Left Encoder", m_leftFront.getSelectedSensorPosition());
         SmartDashboard.putNumber("Right Encoder", m_rightFront.getSelectedSensorPosition());
         SmartDashboard.putNumber("Turret Encoder", turretRotator.getSelectedSensorPosition());
+        SmartDashboard.putNumber("Flywheel Velocity", rightBackupFlywheelMaster.getSelectedSensorVelocity());
 
         if(m_gamepad.getStickButtonPressed(GenericHID.Hand.kRight)) {
             limelightTable.getEntry("ledMode").setNumber(0);
@@ -185,9 +191,6 @@ public class Robot extends TimedRobot {
             limelightTable.getEntry("ledMode").setNumber(1);
             limelightTable.getEntry("camMode").setNumber(1);
         }
-
-        // Periodic logic for components
-        Flywheel.periodic();
     }
 
     @Override
@@ -256,6 +259,30 @@ public class Robot extends TimedRobot {
         } else {
             //Sets up arcade drive
             m_drive.arcadeDrive(m_joy.getY(), -m_joy.getX());
+        }
+
+        if(m_gamepad.getBumper(GenericHID.Hand.kRight)) { //Deploy intake (DEBUG)
+            intake.set(DoubleSolenoid.Value.kForward);
+        }
+        if(m_gamepad.getBumper(GenericHID.Hand.kLeft)) { //Retract intake (DEBUG)
+            intake.set(DoubleSolenoid.Value.kReverse);
+        }
+
+        //Drive flywheel (DEBUG)
+        leftFlywheelMaster.set(ControlMode.PercentOutput, m_gamepad.getY(GenericHID.Hand.kRight));
+        rightBackupFlywheelMaster.set(ControlMode.PercentOutput, m_gamepad.getY(GenericHID.Hand.kRight));
+        leftFlywheelSlave.set(ControlMode.PercentOutput, m_gamepad.getY(GenericHID.Hand.kRight));
+        rightFlywheelSlave.set(ControlMode.PercentOutput, m_gamepad.getY(GenericHID.Hand.kRight));
+
+        //Drive intake, divide inputs by 5 as the motor can move very fast (DEBUG)
+        intakeMotor.set(TalonFXControlMode.PercentOutput,m_gamepad.getY(GenericHID.Hand.kLeft)/5.0);
+
+        //Move pulleys (DEBUG)
+        if(m_gamepad.getAButton()) {
+            horizontalPulley.set(ControlMode.PercentOutput,-0.25);
+        } else {
+            horizontalPulley.set(ControlMode.PercentOutput,0);
+
         }
 
         if ((m_gamepad.getBButton() || m_gamepad.getXButton()) && limelightTable.getEntry("tv").getDouble(0) == 1) { //If either B or X is pressed
