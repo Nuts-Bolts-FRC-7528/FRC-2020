@@ -1,6 +1,7 @@
 plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2020.1.2"
+    id "com.peterabeles.gversion" version "1.2.4" //Plugin to grab the git version of the code
 }
 
 sourceCompatibility = JavaVersion.VERSION_11
@@ -37,6 +38,14 @@ deploy {
     }
 }
 
+gversion {
+    srcDir = "src/main/java/"
+    classPackage = "com.team7528.lib" //Package Git Version Output class is in
+    className = "GitVersionGetter" //Class inside the classPackage package to output git version values to
+    dateFormat   = "MM-dd-yyyy HH:mm:ss" //Outputs dates as Month-Day-Year Hour:Minute:Second
+    timeZone     = "PST" //optional. PST is default
+}
+
 // Set this to true to enable desktop support.
 def includeDesktopSupport = false
 
@@ -57,6 +66,8 @@ dependencies {
     // Enable simulation gui support. Must check the box in vscode to enable support
     // upon debugging
     simulation wpi.deps.sim.gui(wpi.platforms.desktop, false)
+
+    project.compileJava.dependsOn(createVersionFile) //Grab git version and output it to GitVersionGetter under the lib directory
 }
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')

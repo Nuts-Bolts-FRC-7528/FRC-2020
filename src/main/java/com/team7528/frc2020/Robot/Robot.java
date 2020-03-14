@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.team7528.frc2020.Robot.auto.AutoModeExecutor;
 import com.team7528.frc2020.Robot.auto.modes.*;
 import com.team7528.frc2020.Robot.components.Flywheel;
+import com.team7528.lib.GitVersionGetter;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -45,9 +46,9 @@ public class Robot extends TimedRobot {
     private SendableChooser<Double> deadBandOptions = new SendableChooser<>();
     private SendableChooser<Boolean> flywheelEncoderChooser = new SendableChooser<>();
 
-    private final double kTurretAlignmentP = 0.03;
+    private final double kTurretAlignmentP = 0.05;
     private final double kTurretSpeedLimit = 0.2;
-    private final int kTurretLimit = 3200;
+    private final int kTurretLimit = 4800;
 
     /**
      * Initiates motor controller set up
@@ -57,7 +58,14 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy HH:mm:ss");
         StringBuilder _initSb = new StringBuilder(); //Holds startup data
-        _initSb.append("ROBOT CODE VERSION: FRC-2020 cvr-code\n");
+
+        //Print info about the repository at large on robot startup
+        _initSb.append("\nROBOT REPOSITORY: ").append(GitVersionGetter.MAVEN_NAME);
+        _initSb.append("\nGIT COMMIT NUMBER: ").append(GitVersionGetter.GIT_REVISION);
+        _initSb.append("\nLAST GIT COMMIT HASH: ").append(GitVersionGetter.GIT_SHA);
+        _initSb.append("\nLAST GIT COMMIT DATE: ").append(GitVersionGetter.GIT_DATE);
+        _initSb.append("\nROBOT CODE BUILD DATE: ").append(GitVersionGetter.BUILD_DATE);
+        _initSb.append("\n-----\n");
 
         //Initialize components
         Flywheel.init();
@@ -162,7 +170,7 @@ public class Robot extends TimedRobot {
         m_blinkin.init();
 
         //Transmits video through cameras
-        CameraServer.getInstance().startAutomaticCapture();
+//        CameraServer.getInstance().startAutomaticCapture();
 
         Shuffleboard.getTab("DRIVETRAIN").add("Left Encoder", -m_leftFront.getSelectedSensorPosition());
         Shuffleboard.getTab("DRIVETRAIN").add("Right Encoder", m_rightFront.getSelectedSensorPosition());
@@ -284,6 +292,20 @@ public class Robot extends TimedRobot {
             horizontalPulley.set(ControlMode.PercentOutput,0);
 
         }
+
+        //If trough aft sensor is tripped, spin vertical pulley
+        /*if(!troughAft.get()) {
+            verticalPulley.set(ControlMode.PercentOutput,0.25);
+        } else {
+            verticalPulley.set(ControlMode.PercentOutput,0);
+        }
+
+        //If trough front sensor is tripped, spin horizontal pulley
+        if(!troughFront.get()) {
+            horizontalPulley.set(ControlMode.PercentOutput,-0.25);
+        } else {
+            horizontalPulley.set(ControlMode.PercentOutput,0);
+        }*/
 
         if ((m_gamepad.getBButton() || m_gamepad.getXButton()) && limelightTable.getEntry("tv").getDouble(0) == 1) { //If either B or X is pressed
             double seek_adjust = kTurretAlignmentP * limelightTable.getEntry("tx").getDouble(0);

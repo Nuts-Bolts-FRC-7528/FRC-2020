@@ -22,7 +22,7 @@ public class RobotMap {
     public static WPI_TalonFX m_rightFront = new WPI_TalonFX(4);
     public static DifferentialDrive m_drive;
 
-    //PowerCell Shooter
+    //Power Cell Shooter
     public static TalonSRX horizontalPulley = new TalonSRX(15);
     public static TalonSRX verticalPulley = new TalonSRX(7);
     public static WPI_TalonSRX turretRotator = new WPI_TalonSRX(20);
@@ -30,6 +30,10 @@ public class RobotMap {
     public static TalonSRX rightBackupFlywheelMaster = new TalonSRX(50);
     public static VictorSPX leftFlywheelSlave = new VictorSPX(9);
     public static VictorSPX rightFlywheelSlave = new VictorSPX(14);
+
+    //Power Cell holder sensors
+    public static DigitalInput troughFront = new DigitalInput(1);
+    public static DigitalInput troughAft = new DigitalInput(2);
 
     //Operator interface
     public static Joystick m_joy = new Joystick(0); //For chassis driver
