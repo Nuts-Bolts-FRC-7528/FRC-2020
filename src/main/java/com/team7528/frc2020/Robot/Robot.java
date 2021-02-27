@@ -8,7 +8,9 @@ import com.team7528.frc2020.Robot.components.Flywheel;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,8 +18,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.io.File;
 import java.text.SimpleDateFormat;
 
-import static com.team7528.frc2020.Robot.common.RobotMap.*;
 import static com.team7528.frc2020.Robot.auto.actions.DriveForwardActionGyro.ypr;
+import static com.team7528.frc2020.Robot.common.RobotMap.*;
 import static com.team7528.frc2020.Robot.components.Flywheel.d;
 
 @SuppressWarnings({"SpellCheckingInspection"})
@@ -41,10 +43,16 @@ public class Robot extends TimedRobot {
     private SendableChooser<AutoModeExecutor> autoPicker = new SendableChooser<>();
     private SendableChooser<Double> fineControlSpeed = new SendableChooser<>();
     private SendableChooser<Double> deadBandOptions = new SendableChooser<>();
+
+
+    public static SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(Flywheel.kS, Flywheel.kV, Flywheel.kA);
+    public static DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(constants.trackwidth);
+    //public static DifferentialDriveOdometry odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees())
+    /* I need odometry calculator - Leo */
+
     /**
      * Initiates motor controller set up
      */
-
     @Override
     public void robotInit() {
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy HH:mm:ss");
@@ -139,6 +147,12 @@ public class Robot extends TimedRobot {
         turretRotator.configFactoryDefault();
         turretRotator.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
         turretRotator.setSelectedSensorPosition(0,0,10);
+    }
+    // Settings for Calculations
+    public static class constants {
+        /* Auto Constants */
+        public static final double trackwidth = 0.635; // In meters?
+
     }
 
     @Override
