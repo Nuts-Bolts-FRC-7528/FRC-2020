@@ -53,8 +53,8 @@ public class setAutonomous {
             public Trajectory getAutonomousTrajectory() {
                 return exampleTrajectory;
             }
-            public Command getAutnomousCommand(){
-                 return new TrajectoryTracker(exampleTrajectory,true).andThen()
+            public Command getAutnomousCommand() {
+                 return new TrajectoryTracker(exampleTrajectory,true).andThen();
             }
 
 }
