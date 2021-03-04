@@ -8,13 +8,9 @@ import com.team7528.frc2020.Robot.components.Flywheel;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.TimedRobot;
-<<<<<<< HEAD
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
-=======
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
->>>>>>> 05e95767691efdb5b5c985c877ac1e1b1c235f5d
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -22,13 +18,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.io.File;
 import java.text.SimpleDateFormat;
 
-<<<<<<< HEAD
 import static com.team7528.frc2020.Robot.auto.actions.DriveForwardActionGyro.ypr;
 import static com.team7528.frc2020.Robot.common.RobotMap.*;
-=======
-import static com.team7528.frc2020.Robot.common.RobotMap.*;
-import static com.team7528.frc2020.Robot.auto.actions.DriveForwardActionGyro.ypr;
->>>>>>> 05e95767691efdb5b5c985c877ac1e1b1c235f5d
 import static com.team7528.frc2020.Robot.components.Flywheel.d;
 
 @SuppressWarnings({"SpellCheckingInspection"})
@@ -163,15 +154,14 @@ public class Robot extends TimedRobot {
         turretRotator.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
         turretRotator.setSelectedSensorPosition(0,0,10);
     }
-<<<<<<< HEAD
+
     // Settings for Calculations
     public static class constants {
         /* Auto Constants */
         public static final double trackwidth = 0.635; // In meters?
 
     }
-=======
->>>>>>> 05e95767691efdb5b5c985c877ac1e1b1c235f5d
+
 
     @Override
     public void robotPeriodic() {

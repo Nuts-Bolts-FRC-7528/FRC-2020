@@ -1,7 +1,6 @@
 package com.team7528.frc2020.Robot.Autonomous;
 
 import com.team7528.frc2020.Robot.Robot;
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
@@ -30,7 +29,7 @@ public class setAutonomous {
                 } catch(IOException e) {
                     exampleTrajectory = TrajectoryGenerator.generateTrajectory(
                             //Start at the origin facing the +X direction
-                            new Pose2d(0,5,new Rotation2d(0))
+                            new Pose2d(0,5,new Rotation2d(0)),
                             // Pass through these two interior waypoints, making an 's' curve path
                             List.of(
                                     new Translation2d(1, 5.5),
@@ -53,8 +52,8 @@ public class setAutonomous {
             public Trajectory getAutonomousTrajectory() {
                 return exampleTrajectory;
             }
-            public Command getAutnomousCommand() {
+          /*public Command getAutonomousCommand()   {
                  return new TrajectoryTracker(exampleTrajectory,true).andThen();
-            }
+            } */
 
 }
