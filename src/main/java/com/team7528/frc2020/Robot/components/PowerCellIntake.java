@@ -1,6 +1,12 @@
 package com.team7528.frc2020.Robot.components;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+<<<<<<< HEAD
+=======
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+>>>>>>> 05e95767691efdb5b5c985c877ac1e1b1c235f5d
 import edu.wpi.first.wpilibj.GenericHID;
 
 import static com.team7528.frc2020.Robot.common.RobotMap.*;

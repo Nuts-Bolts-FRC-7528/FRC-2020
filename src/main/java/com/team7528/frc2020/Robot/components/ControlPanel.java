@@ -1,10 +1,19 @@
 package com.team7528.frc2020.Robot.components;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+<<<<<<< HEAD
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.util.Color;
 
 import static com.team7528.frc2020.Robot.common.RobotMap.*;
+=======
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+
+import static com.team7528.frc2020.Robot.common.RobotMap.*;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.util.Color;
+>>>>>>> 05e95767691efdb5b5c985c877ac1e1b1c235f5d
 
 public class ControlPanel {
     public static void init() {

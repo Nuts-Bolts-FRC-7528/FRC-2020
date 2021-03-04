@@ -79,5 +79,8 @@ public abstract class AutoModeBase implements Runnable {
     void stop() {
         active = false;
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 05e95767691efdb5b5c985c877ac1e1b1c235f5d
 }

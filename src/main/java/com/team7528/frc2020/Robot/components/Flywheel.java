@@ -59,10 +59,13 @@ public class Flywheel {
     public static NetworkTableEntry viableDistanceEntry = Shuffleboard.getTab("DRIVETRAIN").
             add("VIABLE RANGE",false).getEntry();
     private static boolean velocityDipped;
+<<<<<<< HEAD
     /*  Closed Loop Constants  */
     public static final double kS = 0; // Minimum voltage required to overcome static friction (V)
     public static final double kV = 0; // Speed per volt (volt seconds per rotation)
     public static final double kA = 0; // Acceleration per volt (volt seconds squared per rotation)
+=======
+>>>>>>> 05e95767691efdb5b5c985c877ac1e1b1c235f5d
 
     /**
      * Sets Phoenix motor settings

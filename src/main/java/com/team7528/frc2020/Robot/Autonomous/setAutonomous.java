@@ -22,7 +22,9 @@ public class setAutonomous {
             //Add kinematics to ensure max speed is actually obeyed
             .setKinematics(Robot.kinematics);
             //Apply the Voltage Constraint
-            .addConstraint(new DifferentialDriveVoltageConstraint(Robot.feedforward, Robot.kinematics, 10));
+            .
+
+    addConstraint(new DifferentialDriveVoltageConstraint(Robot.feedforward, Robot.kinematics, 10));
             Trajectory exampleTrajectory;
             private setAutonomous() {
                 try {
