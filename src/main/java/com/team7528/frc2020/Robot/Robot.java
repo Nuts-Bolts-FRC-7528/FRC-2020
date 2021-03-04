@@ -52,7 +52,6 @@ public class Robot extends TimedRobot {
     private SendableChooser<AutoModeExecutor> autoPicker = new SendableChooser<>();
     private SendableChooser<Double> fineControlSpeed = new SendableChooser<>();
     private SendableChooser<Double> deadBandOptions = new SendableChooser<>();
-<<<<<<< HEAD
 
 
     public static SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(Flywheel.kS, Flywheel.kV, Flywheel.kA);
@@ -63,12 +62,12 @@ public class Robot extends TimedRobot {
     /**
      * Initiates motor controller set up
      */
-=======
+
     /**
      * Initiates motor controller set up
      */
 
->>>>>>> 05e95767691efdb5b5c985c877ac1e1b1c235f5d
+
     @Override
     public void robotInit() {
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy HH:mm:ss");

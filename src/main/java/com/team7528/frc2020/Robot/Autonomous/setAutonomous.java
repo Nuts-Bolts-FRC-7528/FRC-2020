@@ -20,11 +20,9 @@ public class setAutonomous {
     // Create config for Trajectory
     public static TrajectoryConfig config = new TrajectoryConfig(2,4) // These numbers do not matter in terms of Boba Bots
             //Add kinematics to ensure max speed is actually obeyed
-            .setKinematics(Robot.kinematics);
-            //Apply the Voltage Constraint
-            .
+            .setKinematics(Robot.kinematics)
 
-    addConstraint(new DifferentialDriveVoltageConstraint(Robot.feedforward, Robot.kinematics, 10));
+            .addConstraint(new DifferentialDriveVoltageConstraint(Robot.feedforward, Robot.kinematics, 10));
             Trajectory exampleTrajectory;
             private setAutonomous() {
                 try {
