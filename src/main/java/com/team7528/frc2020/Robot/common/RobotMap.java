@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
  * Initiates both the motor controllers and joystick
  */
 
-public class RobotMap {
+public class RobotMap<genStatus> {
 
     //Drive train
     public static WPI_TalonFX m_leftAft = new WPI_TalonFX(1);
@@ -50,6 +50,8 @@ public class RobotMap {
 
     //Gyroscope
     public static PigeonIMU gyroScope = new PigeonIMU(50);
+    public static PigeonIMU.GeneralStatus genStatus = new PigeonIMU.GeneralStatus();
+
 
     //Intake
 //    public static DoubleSolenoid intake = new DoubleSolenoid(1,2);

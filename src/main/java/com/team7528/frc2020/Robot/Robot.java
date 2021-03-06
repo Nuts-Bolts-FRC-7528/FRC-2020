@@ -2,14 +2,15 @@ package com.team7528.frc2020.Robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.sensors.PigeonIMU;
 import com.team7528.frc2020.Robot.auto.AutoModeExecutor;
 import com.team7528.frc2020.Robot.auto.modes.*;
 import com.team7528.frc2020.Robot.components.Flywheel;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -50,6 +51,46 @@ public class Robot extends TimedRobot {
     //public static DifferentialDriveOdometry odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees())
     /* I need odometry calculator - Leo */
 
+    // Initializes an encoder on DIO pins 0 and 1
+    // Defaults to 4X decoding and non-inverted
+    // Encoder encoder = new Encoder(0,1);
+
+    // Configures the encoder to return a distance of 4 for every 256 pulses
+    // Also changes the units of getRate
+    // encoder.setDistancePerPulse(4./256.);
+
+    /* [GYROSCOPE Code] */
+     Gyro gyro = new ADXRS450_Gyro(SPI.Port.kMXP);
+     //Finds the Accumulative YAW for Degrees
+    public double SensorValue(PigeonIMU m_pigeon) {
+        final double [] ypr = new double[3];
+        m_pigeon.getYawPitchRoll(ypr);
+        return Math.IEEEremainder(ypr[0], 360);
+
+
+    }
+    //The gain for a simple P loop
+    double kP = 0.1;
+    public boolean rotateToAngle(double targetAngle, double threshold) {
+        // rotating to an angle to use PID, checks for
+        double error = targetAngle - SensorValue(gyroScope); //(the angle you want) - (the current angle of the gyro) = error
+        if (error > threshold) {
+            double rotationSpeed = (double) (error * ((double)kP));
+            System.out.println("Gyroscope Error - angle may not be correct");
+            return false; // returns false if angle is not correct
+        }
+        else {
+            float rotationSpeed = 0;
+            System.out.println("Gyroscope Angle is not correct.");
+            return true; // returns true if angle is not correct
+        }
+        // This function will calculate the error of an angle, and if it's within a threshold,
+        // it will return True, signaling that the robot is pointed where it needs to be.
+        /* Function should be put in drive class */
+
+    }
+
+
     /**
      * Initiates motor controller set up
      */
@@ -64,6 +105,16 @@ public class Robot extends TimedRobot {
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy HH:mm:ss");
         //Defines a new string builder
         StringBuilder _initSb = new StringBuilder();
+
+        //Displaying heading data from a Gyro in the form of a compass
+        //Shuffleboard.getTab("Example tab").add((Sendable) gyro);
+
+
+        SpeedControllerGroup leftMotors = new SpeedControllerGroup(m_leftFront, m_leftAft);
+        SpeedControllerGroup rightMotors = new SpeedControllerGroup(m_rightFront, m_rightAft);
+
+        DifferentialDrive drive = new DifferentialDrive(leftMotors, rightMotors);
+
 
         //Defines a new differential drive
         m_drive = new DifferentialDrive(m_leftFront, m_rightFront);
@@ -188,6 +239,8 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
 
+
+
         m_drive.setSafetyEnabled(false);
 
         //Reset encoders to 0
@@ -203,6 +256,8 @@ public class Robot extends TimedRobot {
 
         //Set LED to alliance color
         m_blinkin.setToTeamColor(false);
+
+
     }
 
     /**
@@ -210,6 +265,14 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousPeriodic() {
+        // Setpoint is implicitly 0, since we don't want the heading to change
+        double error = -gyro.getRate();
+
+        // Drives forward continuously at half speed, using the gyro to stabilize the heading
+        m_drive.tankDrive(.5 + kDefaultPeriod, .5 -kDefaultPeriod * error);
+
+        // Drives forward continuously at half speed, using the gyro to stablize the heading
+        m_drive.tankDrive(.5 + kDefaultPeriod * error, .5 - kDefaultPeriod * error);
         Flywheel.periodic();
     }
 
