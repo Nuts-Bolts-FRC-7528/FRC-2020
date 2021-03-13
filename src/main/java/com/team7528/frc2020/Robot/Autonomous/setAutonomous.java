@@ -18,9 +18,9 @@ public class setAutonomous {
 
     // Create config for Trajectory
     public static TrajectoryConfig config = new TrajectoryConfig(2,4) // These numbers do not matter in terms of Boba Bots
-            //Add kinematics to ensure max speed is actually obeyed
+            // Add kinematics to ensure max speed is actually obeyed
             .setKinematics(Robot.kinematics)
-
+            // Voltage Constraint
             .addConstraint(new DifferentialDriveVoltageConstraint(Robot.feedforward, Robot.kinematics, 10));
             Trajectory exampleTrajectory;
             private setAutonomous() {
@@ -28,7 +28,7 @@ public class setAutonomous {
                     exampleTrajectory = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/paths/InitiationToTarget.json"));
                 } catch(IOException e) {
                     exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-                            //Start at the origin facing the +X direction
+                            // Start at the origin facing the +X direction
                             new Pose2d(0,5,new Rotation2d(0)),
                             // Pass through these two interior waypoints, making an 's' curve path
                             List.of(
