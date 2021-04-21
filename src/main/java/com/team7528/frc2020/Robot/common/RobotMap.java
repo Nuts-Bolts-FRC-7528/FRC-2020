@@ -32,13 +32,17 @@ public class RobotMap<genStatus> {
     public static ColorSensorV3 colors = new ColorSensorV3(I2C.Port.kOnboard);
 
     //PowerCell Shooter
-    public static WPI_TalonSRX ballConveyor = new WPI_TalonSRX(3);
+    // public static WPI_TalonSRX ballConveyor = new WPI_TalonSRX(3);
     public static WPI_TalonSRX turretRotator = new WPI_TalonSRX(20);
     public static WPI_TalonFX flywheelMaster = new WPI_TalonFX(18);
     public static WPI_TalonFX flywheelSlave = new WPI_TalonFX(19);
 
+<<<<<<< HEAD
 
     public static TalonSRX imuTalon = new TalonSRX(50);
+=======
+    // public static TalonSRX imuTalon = new TalonSRX(50);
+>>>>>>> 8f795e1480759dbd041be9a7269940c6c6f1e1d4
 
     //Operator interface
     public static Joystick m_joy = new Joystick(0); //For chassis driver
@@ -64,4 +68,8 @@ public class RobotMap<genStatus> {
 
     //Vision
     public static NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("limelight"); // The limelight NetworkTable, used to set a2
+
+    // Conveyor Belt
+    public static TalonSRX ConveyorMotor1 = new TalonSRX(51);
+    public static TalonSRX ConveyorMotor2 = new TalonSRX(52);
 }

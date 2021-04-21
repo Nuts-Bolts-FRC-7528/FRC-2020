@@ -88,4 +88,28 @@ public class PowerCellIntake {
     public static void reportStatistics() {
         //System.out.println("Intake Motor Power Level " + intakeMotor.get());
     }
+    /**
+     *  PID Loop for Turret Rotation!
+     *
+     *   @author Leo
+     */
+    public static int turreterror(double error) {
+        if (turretRotator.get() > 1.35) { // If turret rotates above 135 degrees, go back -[controller speed +.2]
+            turretRotator.set(error - .2);
+            System.out.println("Turret cannot go above 135 degrees");
+            return 1;
+        }
+        if (turretRotator.get() < .45) {  // If turret rotates above 45 degrees, go back -[controller speed -.2]
+            turretRotator.set(error + .2);
+            System.out.println("Turret cannot go below 45 degrees");
+            return 1;
+        }
+        else { // Turret rotation is okay!
+            return 0;
+        }
+
+    }
+    public static void ConveyorPassage() {
+
+    }
 }

@@ -6,6 +6,7 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 import com.team7528.frc2020.Robot.auto.AutoModeExecutor;
 import com.team7528.frc2020.Robot.auto.modes.*;
 import com.team7528.frc2020.Robot.components.Flywheel;
+import com.team7528.frc2020.Robot.components.PowerCellIntake;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
@@ -89,7 +90,7 @@ public class Robot extends TimedRobot {
         /* Function should be put in drive class */
 
     }
-
+    
 
     /**
      * Initiates motor controller set up
@@ -272,7 +273,7 @@ public class Robot extends TimedRobot {
         m_drive.tankDrive(.5 + kDefaultPeriod, .5 -kDefaultPeriod * error);
 
         // Drives forward continuously at half speed, using the gyro to stablize the heading
-        m_drive.tankDrive(.5 + kDefaultPeriod * error, .5 - kDefaultPeriod * error);
+        // m_drive.tankDrive(.5 + kDefaultPeriod * error, .5 - kDefaultPeriod * error);
         Flywheel.periodic();
     }
 
@@ -326,11 +327,16 @@ public class Robot extends TimedRobot {
                 turretRotator.set(ControlMode.PercentOutput, -seek_adjust);
                 SmartDashboard.putNumber("seek_adjust_", -seek_adjust);
             } else if(m_gamepad.getXButton()) { //If X is pressed, go left with 20% power
-                turretRotator.set(ControlMode.PercentOutput, 0.2);
+                if (PowerCellIntake.turreterror(turretRotator.get()) < 1) {
+                    turretRotator.set(ControlMode.PercentOutput, 0.2);
+                }
             } else if (m_gamepad.getBButton()) { //If B is pressed, go right with 20% power
-                turretRotator.set(ControlMode.PercentOutput, -0.2);
+                if (PowerCellIntake.turreterror(turretRotator.get()) < 1) {
+                    turretRotator.set(ControlMode.PercentOutput, -0.2);
+                }
             }
         }
+
     }
 
     @Override
