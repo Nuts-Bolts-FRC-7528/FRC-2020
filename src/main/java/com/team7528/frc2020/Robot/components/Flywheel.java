@@ -174,6 +174,6 @@ public class Flywheel {
      * Shoots the ball
      */
     public static void runConveyor() {
-        ballConveyor.set(0.2);
+        //ballConveyor.set(0.2);
     }
 }
