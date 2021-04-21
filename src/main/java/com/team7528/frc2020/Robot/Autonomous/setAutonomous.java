@@ -1,9 +1,15 @@
 package com.team7528.frc2020.Robot.Autonomous;
 
 import com.team7528.frc2020.Robot.Robot;
+import com.team7528.frc2020.Robot.auto.actions.DriveForwardActionFeet;
+import com.team7528.frc2020.Robot.auto.actions.WaitAction;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
@@ -54,6 +60,6 @@ public class setAutonomous {
             }
           /*public Command getAutonomousCommand()   {
                  return new TrajectoryTracker(exampleTrajectory,true).andThen();
-            } */
-
+            }
+           */
 }
